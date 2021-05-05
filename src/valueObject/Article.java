@@ -17,7 +17,7 @@ public class Article {
 
     public String toString() {
         String availability = available ? "in stock" : "SOLD OUT";
-        return ("Nr: " + articleNr + " / Article-name: " + name + " / Price: " + price + " / Availability: " + availability);
+        return ("Nr: " + articleNr + " | Article-name: " + name + " | Price: " + price + "€" + " | Availability: " + availability);
     }
 
     public boolean equals(Object otherArticle) {
