@@ -3,11 +3,11 @@ package valueObject;
 public class Article {
     private String name;
     private int articleNr;
-    private float price;
+    private double price;
     private int stock;
     private boolean available;
 
-    public Article(String name, int articleNr, float price, int stock, boolean available) {
+    public Article(String name, int articleNr, double price, int stock, boolean available) {
         this.articleNr = articleNr;
         this.name = name;
         this.price = price;
@@ -16,8 +16,8 @@ public class Article {
     }
 
     public String toString() {
-        String availability = available ? "verfuegbar" : "ausverkauft";
-        return ("Nr: " + articleNr + " / Artikelname: " + name + " / Preis: " + price + "Verfügbarkeit" + availability);
+        String availability = available ? "in stock" : "SOLD OUT";
+        return ("Nr: " + articleNr + " / Article-name: " + name + " / Price: " + price + " / Availability: " + availability);
     }
 
     public boolean equals(Object otherArticle) {
@@ -38,7 +38,7 @@ public class Article {
 
     public int getArticleNr()    { return articleNr; }
 
-    public float getPrice()      { return price; }
+    public double getPrice()      { return price; }
 
     public int getStock()        { return stock; }
 

@@ -10,7 +10,7 @@ public class ArticleAdministration {
     Article article = new Article("name", 0, 0, 1, true );
     private List<Article> inventory = new ArrayList<>();
 
-    public void add(String name, int articleNr, float price, int stock, boolean available) {
+    public void add(String name, int articleNr, double price, int stock, boolean available) {
         inventory.add(new Article(name, articleNr, price, stock, available));
     }
 
@@ -63,6 +63,11 @@ public class ArticleAdministration {
         }
         return toPrint;
     }
+
+    public List<Article> getAllArticles() {
+        return new ArrayList<Article>(inventory);
+    }
+
     private List<Article> getInventorySortedByArticleNr() {
         List<Article> sorted = inventory;
         int j = 0;

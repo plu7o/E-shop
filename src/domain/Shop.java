@@ -12,6 +12,10 @@ public class Shop {
         this.file = file;
 
         articleAdministration = new ArticleAdministration();
+        articleAdministration.add("article1", 1, 7.80,0, false);
+        articleAdministration.add("article2", 2, 5.00,15, true);
+        articleAdministration.add("article3", 3, 4.50,20, true);
+
         userAdministration = new UserAdministration();
     }
 

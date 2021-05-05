@@ -79,8 +79,8 @@ public class CUI {
                 case "4":
                     System.out.println("Article-name > ");
                     articleName = readInput();
-                    // search for articles
-                    //showArticleList(list);
+                    list = shop.searchArticle(articleName);
+                    showArticleList(list);
                     break;
             }
         }
