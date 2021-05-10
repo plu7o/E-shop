@@ -50,4 +50,28 @@ public class UserAdministration {
 
                 }*/
         }
+        public void newStaff() {
+                if(user.isStaff()) {
+                	 System.out.println("Registrierung: Benutzernamen und Adresse eingeben");
+                     user.setName();
+                     user.setAddress();
+                     System.out.println("Bitte Passwort eingeben");
+                     user.setPassword();
+                     user.setStaff();
+                }
+                 else
+                	 System.out.println("Nur Mitarbeiter dürfen neue Mitarbeiter registrieren.")
+                }
+        
+        public void newArticle() {
+        	if(user.isStaff()) {
+        		System.out.println("Bitte Name,Artikelnummer, Preis und Warenanzahl im Lager angeben.");
+        		Article.setName();
+        		Article.setArticleNr();
+        		Article.setPrice();
+        		Article.setStock();
+        	}
+        	else
+        		System.out.println("Nur Mitarbeiter dürfen neue Artikel in den Bestand aufnehmen.");
+        }
 }
