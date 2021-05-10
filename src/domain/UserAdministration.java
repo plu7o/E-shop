@@ -1,5 +1,6 @@
 package domain;
 import valueObject.User;
+import valueObject.Article;
 
 public class UserAdministration {
         User user = new User("name", 0, "pw");
