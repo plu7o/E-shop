@@ -1,6 +1,7 @@
 package domain;
 //import org.jetbrains.annotations.NotNull;
 import valueObject.Article;
+import valueObject.Invoice;
 import java.util.Comparator.*;
 import java.util.Collections;
 
@@ -14,28 +15,31 @@ public class ArticleAdministration {
         inventory.add(new Article(name, articleNr, price, stock, available));
     }
 
+    public void add(Article article) {
+        inventory.add(article);
+    }
+
     public void delete(int articleNr) {
         int position = getPosOfArticleViaArticleNr(articleNr);
         if (position >= 0) { inventory.remove(position); }
     }
 
-    public void buy(Map<Article, Integer> shoppingCart) {
+    public boolean buy(Map<Article, Integer> shoppingCart, int userNr) {
         /** Summe berechnen **/
-        float total = 0;
         for (Article article : shoppingCart.keySet()) {
             if (article.getStock() < shoppingCart.get(article)) {
                 System.out.println("Du willst mehr, als wir haben.");
-                return;
-            } else {
-                total += article.getPrice() * shoppingCart.get(article);
+                return false;
             }
         }
-        System.out.println("Das kostet dich " + turnToEuro(total));
-        // TODO bezahlen
+        Invoice invoice = new Invoice(shoppingCart, userNr);
+        invoice.print();
+        // TODO bezahlen (preis = invoice.getTotal()
         /** Artikelanzahl im Inventar reduzieren **/
         for (Article article : shoppingCart.keySet()) {
             inventory.get(getPosOfArticleViaArticleNr(article.getArticleNr())).reduceStock(shoppingCart.get(article));
         }
+        return true;
     }
 
     private int getPosOfArticleViaArticleNr(int articleNr) {
@@ -53,22 +57,11 @@ public class ArticleAdministration {
 
     public void save() {} // TODO Aufgabe 2
 
-    // für Ausgabe
-    public List<Article> getAllAvailableArticles() {
-        List<Article> toPrint = new ArrayList<>();
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).isAvailable()) {
-                toPrint.add(inventory.get(i));
-            }
-        }
-        return toPrint;
-    }
+    //Getter - get all
+    public List<Article> getAllArticles() { return new ArrayList<Article>(inventory); }
 
-    public List<Article> getAllArticles() {
-        return new ArrayList<Article>(inventory);
-    }
-
-    private List<Article> getInventorySortedByArticleNr() {
+    //Getter - get all - sorted
+    public List<Article> getInventorySortedByArticleNr() {
         List<Article> sorted = inventory;
         int j = 0;
         Article tmp;
@@ -85,7 +78,8 @@ public class ArticleAdministration {
         }
         return sorted;
     }
-    private List<Article> getInventorySortedByPrice() {
+
+    public List<Article> getInventorySortedByPrice() {
         List<Article> sorted = inventory;
         int j = 0;
         Article tmp;
@@ -102,7 +96,8 @@ public class ArticleAdministration {
         }
         return sorted;
     }
-    private List<Article> getInventorySortedByStock() {
+
+    public List<Article> getInventorySortedByStock() {
         List<Article> sorted = inventory;
         int j = 0;
         Article tmp;
@@ -120,7 +115,52 @@ public class ArticleAdministration {
         return sorted;
     }
 
-    //
+    //Getter - get available
+    public List<Article> getAllAvailableArticles() {
+        List<Article> onlyAvailable = new ArrayList<>();
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i).isAvailable()) {
+                onlyAvailable.add(inventory.get(i));
+            }
+        }
+        return onlyAvailable;
+    }
+
+    //Getter - get available - sorted
+    public List<Article> getAllAvailableArticlesSortedByArticleNr() {
+        List<Article> onlyAvailable = new ArrayList<>();
+        List<Article> sorted = getInventorySortedByArticleNr();
+        for (int i = 0; i < sorted.size(); i++) {
+            if (sorted.get(i).isAvailable()) {
+                onlyAvailable.add(sorted.get(i));
+            }
+        }
+        return onlyAvailable;
+    }
+
+    public List<Article> getAllAvailableArticlesSortedByPrice() {
+        List<Article> onlyAvailable = new ArrayList<>();
+        List<Article> sorted = getInventorySortedByPrice();
+        for (int i = 0; i < sorted.size(); i++) {
+            if (sorted.get(i).isAvailable()) {
+                onlyAvailable.add(sorted.get(i));
+            }
+        }
+        return onlyAvailable;
+    }
+
+    public List<Article> getAllAvailableArticlesSortedByStock() {
+        List<Article> onlyAvailable = new ArrayList<>();
+        List<Article> sorted = getInventorySortedByStock();
+        for (int i = 0; i < sorted.size(); i++) {
+            if (sorted.get(i).isAvailable()) {
+                onlyAvailable.add(sorted.get(i));
+            }
+        }
+        return onlyAvailable;
+    }
+
+    //misc
     private String turnToEuro(float price) {
         return (int)price + "," + (int)(price*100-(int)price*100) + "€" ;
     }
@@ -135,4 +175,3 @@ public class ArticleAdministration {
         return search;
     }
 }
-
