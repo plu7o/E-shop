@@ -116,48 +116,29 @@ public class ArticleAdministration {
     }
 
     //Getter - get available
-    public List<Article> getAllAvailableArticles() {
+    public List<Article> getOnlyAvailable(List<Article> list) {
         List<Article> onlyAvailable = new ArrayList<>();
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).isAvailable()) {
-                onlyAvailable.add(inventory.get(i));
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isAvailable()) {
+                onlyAvailable.add(list.get(i));
             }
         }
         return onlyAvailable;
     }
+
+    public List<Article> getAllAvailableArticles() { return getOnlyAvailable(inventory); }
 
     //Getter - get available - sorted
     public List<Article> getAllAvailableArticlesSortedByArticleNr() {
-        List<Article> onlyAvailable = new ArrayList<>();
-        List<Article> sorted = getInventorySortedByArticleNr();
-        for (int i = 0; i < sorted.size(); i++) {
-            if (sorted.get(i).isAvailable()) {
-                onlyAvailable.add(sorted.get(i));
-            }
-        }
-        return onlyAvailable;
+        return getOnlyAvailable(getInventorySortedByArticleNr());
     }
 
     public List<Article> getAllAvailableArticlesSortedByPrice() {
-        List<Article> onlyAvailable = new ArrayList<>();
-        List<Article> sorted = getInventorySortedByPrice();
-        for (int i = 0; i < sorted.size(); i++) {
-            if (sorted.get(i).isAvailable()) {
-                onlyAvailable.add(sorted.get(i));
-            }
-        }
-        return onlyAvailable;
+        return getOnlyAvailable(getInventorySortedByPrice());
     }
 
     public List<Article> getAllAvailableArticlesSortedByStock() {
-        List<Article> onlyAvailable = new ArrayList<>();
-        List<Article> sorted = getInventorySortedByStock();
-        for (int i = 0; i < sorted.size(); i++) {
-            if (sorted.get(i).isAvailable()) {
-                onlyAvailable.add(sorted.get(i));
-            }
-        }
-        return onlyAvailable;
+        return getOnlyAvailable(getInventorySortedByStock());
     }
 
     //misc
