@@ -1,22 +1,15 @@
 package domain;
-//import org.jetbrains.annotations.NotNull;
 import valueObject.Article;
 import valueObject.Invoice;
-import java.util.Comparator.*;
-import java.util.Collections;
 
+import java.util.Collections;
 import java.util.*;
 
 public class ArticleAdministration {
-    Article article = new Article("name", 0, 0, 1, true );
     private List<Article> inventory = new ArrayList<>();
 
-    public void add(String name, int articleNr, double price, int stock, boolean available) {
-        inventory.add(new Article(name, articleNr, price, stock, available));
-    }
-
-    public void add(Article article) {
-        inventory.add(article);
+    public void add(String name, double price, int stock, boolean available) {
+        inventory.add(new Article(name, articleNrGen(), price, stock, available));
     }
 
     public void delete(int articleNr) {
@@ -25,7 +18,7 @@ public class ArticleAdministration {
     }
 
     public boolean buy(Map<Article, Integer> shoppingCart, int userNr) {
-        /** Summe berechnen **/
+        // Summe berechnen
         for (Article article : shoppingCart.keySet()) {
             if (article.getStock() < shoppingCart.get(article)) {
                 System.out.println("Du willst mehr, als wir haben.");
@@ -35,7 +28,7 @@ public class ArticleAdministration {
         Invoice invoice = new Invoice(shoppingCart, userNr);
         invoice.print();
         // TODO bezahlen (preis = invoice.getTotal()
-        /** Artikelanzahl im Inventar reduzieren **/
+        // Artikelanzahl im Inventar reduzieren
         for (Article article : shoppingCart.keySet()) {
             inventory.get(getPosOfArticleViaArticleNr(article.getArticleNr())).reduceStock(shoppingCart.get(article));
         }
@@ -48,6 +41,7 @@ public class ArticleAdministration {
         }
         return -1;
     }
+
     private int getPosOfArticleViaName(String name) {
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.get(i).getName().equals(name)) { return i; }
@@ -57,20 +51,18 @@ public class ArticleAdministration {
 
     public void save() {} // TODO Aufgabe 2
 
-    //Getter - get all
+    //Inventory - get all
     public List<Article> getAllArticles() { return new ArrayList<Article>(inventory); }
 
-    //Getter - get all - sorted
+    //Inventory - get sorted
     public List<Article> getInventorySortedByArticleNr() {
         List<Article> sorted = inventory;
-        int j = 0;
+        int j;
         Article tmp;
         for (int i = 1; i < sorted.size(); i++) {
             if (sorted.get(i).getArticleNr() < sorted.get(i-1).getArticleNr()) {
                 j = i-1;
-                while(j >= 0 && sorted.get(i).getArticleNr() < sorted.get(j).getArticleNr()) {
-                    j--;
-                }
+                while(j >= 0 && sorted.get(i).getArticleNr() < sorted.get(j).getArticleNr()) { j--; }
                 tmp = inventory.get(i);
                 inventory.remove(i);
                 inventory.add(j+1, tmp);
@@ -81,14 +73,12 @@ public class ArticleAdministration {
 
     public List<Article> getInventorySortedByPrice() {
         List<Article> sorted = inventory;
-        int j = 0;
+        int j;
         Article tmp;
         for (int i = 1; i < sorted.size(); i++) {
             if (sorted.get(i).getPrice() < sorted.get(i-1).getPrice()) {
                 j = i-1;
-                while(j >= 0 && sorted.get(i).getPrice() < sorted.get(j).getPrice()) {
-                    j--;
-                }
+                while(j >= 0 && sorted.get(i).getPrice() < sorted.get(j).getPrice()) { j--; }
                 tmp = inventory.get(i);
                 inventory.remove(i);
                 inventory.add(j+1, tmp);
@@ -99,14 +89,12 @@ public class ArticleAdministration {
 
     public List<Article> getInventorySortedByStock() {
         List<Article> sorted = inventory;
-        int j = 0;
+        int j;
         Article tmp;
         for (int i = 1; i < sorted.size(); i++) {
             if (sorted.get(i).getStock() < sorted.get(i-1).getStock()) {
                 j = i-1;
-                while(j >= 0 && sorted.get(i).getStock() < sorted.get(j).getStock()) {
-                    j--;
-                }
+                while(j >= 0 && sorted.get(i).getStock() < sorted.get(j).getStock()) { j--; }
                 tmp = inventory.get(i);
                 inventory.remove(i);
                 inventory.add(j+1, tmp);
@@ -115,12 +103,12 @@ public class ArticleAdministration {
         return sorted;
     }
 
-    //Getter - get available
-    public List<Article> getOnlyAvailable(List<Article> list) {
+    //Inventory - get available
+    private List<Article> getOnlyAvailable(List<Article> list) {
         List<Article> onlyAvailable = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).isAvailable()) {
-                onlyAvailable.add(list.get(i));
+        for (Article article : list) {
+            if (article.isAvailable()) {
+                onlyAvailable.add(article);
             }
         }
         return onlyAvailable;
@@ -128,7 +116,7 @@ public class ArticleAdministration {
 
     public List<Article> getAllAvailableArticles() { return getOnlyAvailable(inventory); }
 
-    //Getter - get available - sorted
+    //Inventory - get available + sorted
     public List<Article> getAllAvailableArticlesSortedByArticleNr() {
         return getOnlyAvailable(getInventorySortedByArticleNr());
     }
@@ -144,6 +132,16 @@ public class ArticleAdministration {
     //misc
     private String turnToEuro(float price) {
         return (int)price + "," + (int)(price*100-(int)price*100) + "€" ;
+    }
+
+    public int articleNrGen() {
+        int articleNr = 100;
+        for (Article article : inventory) {
+            if (articleNr <= article.getArticleNr()) {
+                articleNr = article.getArticleNr() + 1;
+            }
+        }
+        return articleNr;
     }
 
     public List<Article> searchArticle(String name) {

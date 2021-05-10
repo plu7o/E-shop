@@ -23,7 +23,7 @@ public class Article {
     public boolean equals(Object otherArticle) {
         if(otherArticle instanceof Article) {
             return ((this.articleNr == ((Article) otherArticle).articleNr)
-                && (this.name.equals(((Article) otherArticle).name)));
+                    && (this.name.equals(((Article) otherArticle).name)));
         } else
             return false;
     }
@@ -38,7 +38,7 @@ public class Article {
 
     public int getArticleNr()    { return articleNr; }
 
-    public double getPrice()      { return price; }
+    public double getPrice()     { return price; }
 
     public int getStock()        { return stock; }
 

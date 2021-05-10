@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.List;
 import domain.ArticleAdministration;
 import domain.Shop;
+import domain.exceptions.LoginFailedException;
+import domain.exceptions.UserAlreadyExistsException;
 import valueObject.*;
 
 public class CUI {
@@ -14,7 +16,7 @@ public class CUI {
     private BufferedReader in;
     private User logged_in_user;
 
-    public CUI(String file) throws IOException {
+    public CUI(String file) throws IOException, UserAlreadyExistsException {
         //Shop Verwaltung wird initialisiert
         shop = new Shop(file);
 
@@ -24,11 +26,17 @@ public class CUI {
     private void showMenu() {
         if (logged_in_user == null) {
             System.out.println("WELCOME! \n");
-            System.out.println("Commands:   \n  Login:           [1]");
-            System.out.println("            \n  Sign Up:         [2]");
-            System.out.println("            \n  Show Articles:   [3]");
-            System.out.println("            \n  Search Articles: [4]");
-            System.out.println("            \n  Exit:            [q]");
+            System.out.println("Commands:   \nLogin:           [1]");
+            System.out.println("            \nSign Up:         [2]");
+            System.out.println("            \nShow Articles:   [3]");
+            System.out.println("            \nSearch Articles: [4]");
+            System.out.println("            \nExit:            [q]");
+        }
+        if (logged_in_user.isCustomer()) {
+
+        }
+        if (logged_in_user.isStaff()) {
+
         }
     }
 
@@ -54,9 +62,10 @@ public class CUI {
                     //password wird eingelesen
                     password = readInput();
                     try {
-                        //Do login
+                        logged_in_user = shop.login(username, password);
+                        System.out.println(logged_in_user.getUsername() + " Successfully logged in!.");
                     } catch (Exception e) {
-                        return;
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "2":
@@ -67,9 +76,9 @@ public class CUI {
                     System.out.println("Password: ");
                     password = readInput();
                     try {
-                        //do signup
-                    } catch (Exception e) {
-                        return;
+                        shop.signup(name, username, password);
+                    } catch (UserAlreadyExistsException e) {
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "3":
@@ -83,6 +92,13 @@ public class CUI {
                     showArticleList(list);
                     break;
             }
+        }
+
+        if (logged_in_user.isCustomer()) {
+
+        }
+        if (logged_in_user.isStaff()){
+
         }
     }
 
@@ -120,12 +136,8 @@ public class CUI {
             cui = new CUI("DATA");
             //Loop
             cui.run();
-        } catch (IOException e) {
+        } catch (IOException | UserAlreadyExistsException e) {
             e.printStackTrace();
         }
     }
 }
-
-
-
-
