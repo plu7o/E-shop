@@ -8,6 +8,7 @@ import java.util.*;
 
 public class ArticleAdministration {
     Article article = new Article("name", 0, 0, 1, true );
+
     private List<Article> inventory = new ArrayList<>();
 
     public void add(String name, int articleNr, double price, int stock, boolean available) {

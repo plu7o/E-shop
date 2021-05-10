@@ -1,30 +1,131 @@
 package domain;
+import domain.exceptions.LoginFailedException;
 import valueObject.User;
 
+import java.util.*;
+
 public class UserAdministration {
-        User user = new User("name", 0, "pw");
 
-        public void login() {
-                System.out.println("Login: Benutzernamen eingeben");
-                User getName;
-                System.out.println("Passwort eingeben");
-                User getPassword;
+        private List<User> customers =  new Vector<User>();
+        private List<User> staff  = new Vector<User>();
+        private Object User;
+
+        public void add(User user) {
+                if (user.isCustomer()) {
+                        if (customers.contains(user)) {
+                                //throw new already exsist exception
+                        }
+                        User customer = user;
+                        customers.add(customer);
+                }
+                if (user.isStaff()) {
+                        if (staff.contains(user)) {
+                                //throw new already exsist exception
+                        }
+                        User Employee = user;
+                        staff.add(Employee);
+                }
         }
 
-        public void register() {
-                System.out.println("Registrierung: Benutzernamen und Adresse eingeben");
-                User setName;
-                User setAddress;
-                System.out.println("Bitte Passwort eingeben");
-                User setPassword;
+        public void delete(User user) {
+                if (user.isStaff()) {
+                        customers.remove(user);
+                }
+                if (user.isStaff()) {
+                        staff.remove(user);
+                }
         }
 
-        public void changeData() {
-                System.out.println("Neuen Benutzernamen und/oder neue Adresse eingeben");
-                User setName;
-                User setAddress;
-                System.out.println("Bitte Passwort eingeben");
-                User getPassword;
+        public List<User> searchCustomer(int userNr) {
+                List<User> search = new Vector<>();
+
+                Iterator<User> iter = customers.iterator();
+                while (iter.hasNext()) {
+                        User user = iter.next();
+                        if (user.getUserNr() == userNr)
+                                search.add(user);
+                }
+
+                Collections.sort(search, Comparator.comparingInt(valueObject.User::getUserNr));
+                return search;
+        }
+
+        public List<User> searchStaff(int userNr) {
+                List<User> search = new Vector<>();
+
+                Iterator<User> iter = staff.iterator();
+                while (iter.hasNext()) {
+                        User user = iter.next();
+                        if (user.getUserNr() == userNr)
+                                search.add(user);
+                }
+
+                Collections.sort(search, Comparator.comparingInt(valueObject.User::getUserNr));
+                return search;
+        }
+
+        public List<User> getCustomerList() {
+                Collections.sort(customers, Comparator.comparing(valueObject.User::getName));
+                return new Vector<User>(customers);
+        }
+
+        public List<User> getStaff() {
+                Collections.sort(staff, Comparator.comparing(valueObject.User::getName));
+                return new Vector<User>(staff);
+        }
+
+        public User login(String username, String password) throws LoginFailedException {
+                User user = findUsername(username);
+
+                if (user.getPassword().equals(password)) {
+                        return user;
+                }
+                throw new LoginFailedException("Username or Password is incorrect");
+        }
+
+        public void register(String name, String username, String password) {
+                try {
+                        User user = findUsername(username);
+                        // throw new User already exsists Exception
+                }
+                catch (LoginFailedException e) {
+                        customers.add(new User(name, userIDGen(), username, password));
+                }
+        }
+
+        private User findUsername(String username) throws LoginFailedException {
+                for (User user : customers) {
+                        if (user.getUsername().equals(username)) {
+                                return user;
+                        }
+                }
+                throw new LoginFailedException("User with username: " + username + " not found. :( ");
+        }
+
+
+        public int userIDGen() {
+                int userID = 100;
+                for (User user : customers) {
+                        if (userID <= user.getUserNr()) {
+                                userID++;
+                        }
+                }
+                return userID;
+        }
+
+        public void changeUserData(User user, String name, String username, String password, String address) {
+                if (!name.equals("")) {
+                        user.setName(name);
+                }
+                if (!username.equals("")) {
+                        user.setUsername(username);
+                }
+                if (!password.equals("")) {
+                        user.setPassword(password);
+                }
+                if (!address.equals("")) {
+                        user.setAddress(address);
+                }
         }
 
         public void buy() { //TODO
@@ -35,19 +136,5 @@ public class UserAdministration {
                 //gekauft
                 //User shoppingCart = 0;
                 //System.out.println(name + date + article + "x" + number + "Einzelpreis:" + price + "Gesamtpreis:" + totalPrice);
-        }
-
-        public void takeArticleShoppingCart() {
-
-        }
-
-        public void changeArticle() {
-
-        }
-
-        public void adminRights() {
-                /*if(!staff) {
-
-                }*/
         }
 }
