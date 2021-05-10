@@ -6,32 +6,32 @@ public class UserAdministration {
 
         public void login() {
                 System.out.println("Login: Benutzernamen eingeben");
-                User getName;
+                user.getName();
                 System.out.println("Passwort eingeben");
-                User getPassword;
+                user.getPassword();
         }
 
         public void register() {
                 System.out.println("Registrierung: Benutzernamen und Adresse eingeben");
-                User setName;
-                User setAddress;
+                user.setName();
+                user.setAddress();
                 System.out.println("Bitte Passwort eingeben");
-                User setPassword;
+                user.setPassword();
         }
 
         public void changeData() {
                 System.out.println("Neuen Benutzernamen und/oder neue Adresse eingeben");
-                User setName;
-                User setAddress;
+                user.setName();
+                user.setAddress();
                 System.out.println("Bitte Passwort eingeben");
-                User getPassword;
+                user.getPassword();
         }
 
         public void buy() { //TODO
                 /* und beim Kauf wird geleert
                 zeitgleich Artikel aus Bestand nehmen
                  */
-                User getShoppingCart;
+                user.getShoppingCart();
                 //gekauft
                 //User shoppingCart = 0;
                 //System.out.println(name + date + article + "x" + number + "Einzelpreis:" + price + "Gesamtpreis:" + totalPrice);
