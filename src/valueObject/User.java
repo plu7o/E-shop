@@ -1,6 +1,4 @@
 package valueObject;
-import valueObject.Article;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,10 +20,10 @@ public class User {
     public User (String name, int userNr, String username, String password, boolean staff, boolean customer) {
         this.name = name;
         this.userNr = userNr;
-        this.password = username;
+        this.username = username;
         this.password = password;
-        this.staff = false;
-        this.customer = false;
+        this.staff = staff;
+        this.customer = customer;
     }
 
 

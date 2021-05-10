@@ -32,11 +32,11 @@ public class CUI {
             System.out.println("            \nSearch Articles: [4]");
             System.out.println("            \nExit:            [q]");
         }
-        if (logged_in_user.isCustomer()) {
-
+        else if (logged_in_user.isCustomer()) {
+            System.out.println("WELCOME! Customer");
         }
-        if (logged_in_user.isStaff()) {
-
+        else if (logged_in_user.isStaff()) {
+            System.out.println("WELCOME! Employee");
         }
     }
 
@@ -63,7 +63,7 @@ public class CUI {
                     password = readInput();
                     try {
                         logged_in_user = shop.login(username, password);
-                        System.out.println(logged_in_user.getUsername() + " Successfully logged in!.");
+                        System.out.println(logged_in_user.getUsername() + " Successfully logged in!");
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
@@ -94,10 +94,10 @@ public class CUI {
             }
         }
 
-        if (logged_in_user.isCustomer()) {
+        else if (logged_in_user.isCustomer()) {
 
         }
-        if (logged_in_user.isStaff()){
+        else if (logged_in_user.isStaff()){
 
         }
     }

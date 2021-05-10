@@ -9,19 +9,18 @@ public class UserAdministration {
 
         private List<User> customers =  new Vector<User>();
         private List<User> staff  = new Vector<User>();
-        private Object User;
 
-        public void add(User user) {
+        public void add(User user) throws UserAlreadyExistsException {
                 if (user.isCustomer()) {
                         if (customers.contains(user)) {
-                                //throw new already exist exception
+                               throw new UserAlreadyExistsException(user, "");
                         }
                         User customer = user;
                         customers.add(customer);
                 }
                 if (user.isStaff()) {
                         if (staff.contains(user)) {
-                                //throw new already exist exception
+                                throw new UserAlreadyExistsException(user, "");
                         }
                         User Employee = user;
                         staff.add(Employee);
@@ -29,7 +28,7 @@ public class UserAdministration {
         }
 
         public void delete(User user) {
-                if (user.isStaff()) {
+                if (user.isCustomer()) {
                         customers.remove(user);
                 }
                 if (user.isStaff()) {
@@ -90,7 +89,8 @@ public class UserAdministration {
                         throw new UserAlreadyExistsException(user, "");
                 }
                 catch (LoginFailedException e) {
-                      customers.add( new User(name, userIDGen(), username, password, false, true));
+                        User user = new User(name, userIDGen(), username, password, false, true);
+                        customers.add(user);
                 }
         }
 
@@ -100,7 +100,12 @@ public class UserAdministration {
                                 return user;
                         }
                 }
-                throw new LoginFailedException("User with username: " + username + " not found. :( ");
+                for (User user : staff) {
+                        if (user.getUsername().equals(username)) {
+                                return user;
+                        }
+                }
+                throw new LoginFailedException("404 User Not Found");
         }
 
         public int userIDGen() {
@@ -112,6 +117,13 @@ public class UserAdministration {
                 }
                 return userID;
         }
+
+        public int staffIDGen() {
+                double Id = Math.floor((Math.random()*100));
+                int staffID = (int)Id;
+                return staffID;
+        }
+
 
         public void changeUserData(User user, String name, String username, String password, String address) {
                 if (!name.equals("")) {

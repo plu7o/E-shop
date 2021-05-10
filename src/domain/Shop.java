@@ -22,7 +22,8 @@ public class Shop {
         articleAdministration.add("article3", 4.50,20, true);
 
         userAdministration = new UserAdministration();
-        userAdministration.register("Test", "tester", "test");
+        addCustomer("test", "tester", "test");
+        addStaff("admin", "admin", "root");
     }
 
     public List<Article> getAllAvailableArticles() {
@@ -33,9 +34,7 @@ public class Shop {
         return articleAdministration.searchArticle(name);
     }
 
-    public void addArticle(String name, double price, int stock, boolean available) {
-        articleAdministration.add(name, price, stock, available);
-    }
+    public void addArticle(String name, double price, int stock, boolean available) { articleAdministration.add(name, price, stock, available); }
 
     public void deleteArticle(int articleNr) {
         articleAdministration.delete(articleNr);
@@ -49,6 +48,18 @@ public class Shop {
     public List<User> searchCustomer (int userID) { return userAdministration.searchCustomer(userID); }
 
     public List<User> searchStaff (int userID) { return userAdministration.searchStaff(userID); }
+
+    public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
+        User user = new User(name, userAdministration.userIDGen(), username, password, false, true);
+        userAdministration.add(user);
+        return user;
+    }
+
+    public User addStaff(String name, String username, String password) throws UserAlreadyExistsException {
+        User user = new User(name, userAdministration.staffIDGen(), username, password, true, false);
+        userAdministration.add(user);
+        return user;
+    }
 
     public void updateUserData(User user, String name, String username, String password, String adress) {
         userAdministration.changeUserData(user, name, username, password, adress);
