@@ -119,15 +119,12 @@ public class CUI {
         if (!(logged_in_user == null)) {
             if (logged_in_user.isCustomer()) {
                 prefix = "eshop@" + logged_in_user.getUsername() + "[customer]$ ";
-                return prefix;
             }
             if (logged_in_user.isStaff()) {
                 prefix = "eshop@" + logged_in_user.getUsername() + "[admin]$ ";
-                return prefix;
             }
         } else {
             prefix = "eshop@guest[~]$ ";
-            return prefix;
         }
         return prefix;
     }
