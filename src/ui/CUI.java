@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
-import domain.ArticleAdministration;
+
 import domain.Shop;
-import domain.exceptions.LoginFailedException;
 import domain.exceptions.UserAlreadyExistsException;
 import valueObject.*;
 
@@ -25,18 +24,21 @@ public class CUI {
 
     private void showMenu() {
         if (logged_in_user == null) {
-            System.out.println("WELCOME! \n");
-            System.out.println("Commands:   \nLogin:           [1]");
-            System.out.println("            \nSign Up:         [2]");
-            System.out.println("            \nShow Articles:   [3]");
-            System.out.println("            \nSearch Articles: [4]");
-            System.out.println("            \nExit:            [q]");
+            String menu = "+----------------------+\n" +
+                          "| Login            [1] |\n" +
+                          "| Sign Up          [2] |\n" +
+                          "| Show Products    [3] |\n" +
+                          "| Search           [4] |\n" +
+                          "| Exit             [q] |\n" +
+                          "+----------------------+\n";
+
+            System.out.println(menu);
         }
         else if (logged_in_user.isCustomer()) {
-            System.out.println("WELCOME! Customer");
+            System.out.println("WELCOME! " + logged_in_user.getUsername());
         }
         else if (logged_in_user.isStaff()) {
-            System.out.println("WELCOME! Employee");
+            System.out.println("WELCOME! " + logged_in_user.getUsername());
         }
     }
 
@@ -55,25 +57,25 @@ public class CUI {
         if (logged_in_user == null) {
             switch (input) {
                 case "1":
-                    System.out.println("Username: ");
+                    System.out.print(prefix() + "Username: ");
                     //username wird eingelesen
                     username = readInput();
-                    System.out.println("Password: ");
+                    System.out.print(prefix() + "Password: ");
                     //password wird eingelesen
                     password = readInput();
                     try {
                         logged_in_user = shop.login(username, password);
-                        System.out.println(logged_in_user.getUsername() + " Successfully logged in!");
+                        System.out.println(logged_in_user.getUsername() + " you Successfully logged in!");
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                     break;
                 case "2":
-                    System.out.println("Name: ");
+                    System.out.print(prefix() + "Name: ");
                     name = readInput();
-                    System.out.println("Username: ");
+                    System.out.print(prefix() + "Username: ");
                     username = readInput();
-                    System.out.println("Password: ");
+                    System.out.print(prefix() + "Password: ");
                     password = readInput();
                     try {
                         shop.signup(name, username, password);
@@ -86,7 +88,7 @@ public class CUI {
                     showArticleList(list);
                     break;
                 case "4":
-                    System.out.println("Article-name > ");
+                    System.out.print(prefix() + "Article-name > ");
                     articleName = readInput();
                     list = shop.searchArticle(articleName);
                     showArticleList(list);
@@ -112,13 +114,40 @@ public class CUI {
         }
     }
 
+    private String prefix() {
+        String prefix = "";
+        if (!(logged_in_user == null)) {
+            if (logged_in_user.isCustomer()) {
+                prefix = "eshop@" + logged_in_user.getUsername() + "[customer]$ ";
+                return prefix;
+            }
+            if (logged_in_user.isStaff()) {
+                prefix = "eshop@" + logged_in_user.getUsername() + "[admin]$ ";
+                return prefix;
+            }
+        } else {
+            prefix = "eshop@guest[~]$ ";
+            return prefix;
+        }
+        return prefix;
+    }
+
     public void run() {
         String input = "";
+        String banner = "███████╗    ███████╗██╗  ██╗ ██████╗ ██████╗ \n" +
+                        "██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗\n" +
+                        "█████╗█████╗███████╗███████║██║   ██║██████╔╝\n" +
+                        "██╔══╝╚════╝╚════██║██╔══██║██║   ██║██╔═══╝ \n" +
+                        "███████╗    ███████║██║  ██║╚██████╔╝██║     \n" +
+                        "╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝       ";
+        System.out.println(banner);
+        System.out.println("WELCOME!");
         do {
             //Gibt menu aus
             showMenu();
             try {
                 // liest den input ein
+                System.out.print(prefix());
                 input = readInput();
                 // verarbeitet den input
                 processUserInput(input);
