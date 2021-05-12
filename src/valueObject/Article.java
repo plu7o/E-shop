@@ -1,11 +1,18 @@
 package valueObject;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Article {
     private String name;
     private int articleNr;
     private double price;
     private int stock;
     private boolean available;
+    private List<String> stockLog = new ArrayList<String>();
+    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
     public Article(String name, int articleNr, double price, int stock, boolean available) {
         this.articleNr = articleNr;
@@ -28,10 +35,15 @@ public class Article {
             return false;
     }
 
-    //Modifier
-    public void addStock(int amount)    { this.stock += amount; }
+    private void logStock(int amount) {
+        LocalDateTime now = LocalDateTime.now();
+        stockLog.add(format.format(now) + " " + amount);
+    }
 
-    public void reduceStock(int amount) { this.stock -= amount; }
+    //Modifier
+    public void addStock(int amount)    { this.stock += amount; logStock(amount); }
+
+    public void reduceStock(int amount) { this.stock -= amount; logStock(-amount); }
 
     //Getter
     public String getName()      { return this.name; }
@@ -44,6 +56,8 @@ public class Article {
 
     public boolean isAvailable() { return available; }
 
+    public List<String> getStockLog() { return stockLog; }
+
     //Setter
     public void setName(String name)            { this.name = name; }
 
@@ -51,7 +65,7 @@ public class Article {
 
     public void setPrice(float price)           { this.price = price; }
 
-    public void setStock(int stock)             { this.stock = stock; }
+    public void setStock(int stock)             { logStock(stock - this.stock); this.stock = stock; }
 
     public void setAvailable(boolean available) { this.available = available; }
 }
