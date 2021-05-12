@@ -1,6 +1,11 @@
 package domain;
+import domain.exceptions.ArticleAlreadyExistsException;
 import valueObject.Article;
 import valueObject.Invoice;
+import valueObject.ShoppingCart;
+import valueObject.User;
+import persistence.*;
+import java.io.IOException;
 
 import java.util.Collections;
 import java.util.*;
@@ -8,26 +13,45 @@ import java.util.*;
 public class ArticleAdministration {
     private List<Article> inventory = new ArrayList<>();
 
-    public void add(String name, double price, int stock, boolean available) {
-        inventory.add(new Article(name, articleNrGen(), price, stock, available));
+    private PersistenceManager pm = new FilePersistenceManager();
+
+    public int add(String name, double price, int stock, boolean available) {
+        Article article = new Article(name, articleNrGen(), price, stock, available);
+        inventory.add(article);
+        return article.getArticleNr();
     }
 
+    public void addArticle(Article article) throws ArticleAlreadyExistsException {
+        if (inventory.contains(article)) {
+                throw new ArticleAlreadyExistsException(article, "");
+        }
+        Article newArticle = article;
+        inventory.add(newArticle);
+    }
+    
     public void delete(int articleNr) {
         int position = getPosOfArticleViaArticleNr(articleNr);
         if (position >= 0) { inventory.remove(position); }
     }
 
-    public boolean buy(Map<Article, Integer> shoppingCart, int userNr) {
-        // Summe berechnen
+    public void changeArticleData(Article article, String name, float price, int stock, boolean available) {
+        if (!name.equals("")) { article.setName(name); }
+        if (price > 0)        { article.setPrice(price); }
+        if (stock != -1)      { article.setStock(stock); }
+        article.setAvailable(available);
+    }
+
+    public boolean buy(User user) {
+        Map<Article, Integer> shoppingCart = user.getShoppingCart().getWarenkorb();
         for (Article article : shoppingCart.keySet()) {
             if (article.getStock() < shoppingCart.get(article)) {
                 System.out.println("Du willst mehr, als wir haben.");
                 return false;
             }
         }
-        Invoice invoice = new Invoice(shoppingCart, userNr);
+        Invoice invoice = new Invoice(user);
         invoice.print();
-        // TODO bezahlen (preis = invoice.getTotal()
+        // TODO bezahlen ( preis = invoice.getTotal() )
         // Artikelanzahl im Inventar reduzieren
         for (Article article : shoppingCart.keySet()) {
             inventory.get(getPosOfArticleViaArticleNr(article.getArticleNr())).reduceStock(shoppingCart.get(article));
@@ -54,7 +78,7 @@ public class ArticleAdministration {
     //Inventory - get all
     public List<Article> getAllArticles() { return new ArrayList<Article>(inventory); }
 
-    //Inventory - get sorted
+    //Inventory - get all sorted
     public List<Article> getInventorySortedByArticleNr() {
         List<Article> sorted = inventory;
         int j;
@@ -116,7 +140,7 @@ public class ArticleAdministration {
 
     public List<Article> getAllAvailableArticles() { return getOnlyAvailable(inventory); }
 
-    //Inventory - get available + sorted
+    //Inventory - get available sorted
     public List<Article> getAllAvailableArticlesSortedByArticleNr() {
         return getOnlyAvailable(getInventorySortedByArticleNr());
     }
@@ -152,5 +176,29 @@ public class ArticleAdministration {
         }
         Collections.sort(search, Comparator.comparingInt(Article::getArticleNr));
         return search;
+    }
+
+    public void readArticleData(String data) throws IOException {
+        pm.openForReading(data);
+        Article article;
+        do {
+            article = pm.loadArticle();
+            if (article != null) {
+                try {
+                    addArticle(article);
+                } catch (ArticleAlreadyExistsException e) {
+
+                }
+            }
+        } while (article != null);
+        pm.close();
+    }
+
+    public void saveArticle(String data) throws IOException {
+        pm.openForWriting(data);
+        for (Article article : inventory) {
+            pm.saveArticle(article);
+        }
+        pm.close();
     }
 }
