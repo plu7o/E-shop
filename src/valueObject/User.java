@@ -1,6 +1,4 @@
 package valueObject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class User {
 
@@ -11,7 +9,8 @@ public class User {
     private String address;
     private boolean staff;
     private boolean customer;
-    private Map<Article, Integer> shoppingCart = new HashMap<>(); // TODO
+
+    private ShoppingCart shoppingCart; // TODO
 
     public User (String name, int userNr, String username, String password) {
         this(name, userNr, username, password, false, false);
@@ -24,9 +23,9 @@ public class User {
         this.password = password;
         this.staff = staff;
         this.customer = customer;
+        this.address = address;
+        this.shoppingCart = new ShoppingCart();
     }
-
-
 
     public boolean equals(Object otherUser) {
         if(otherUser instanceof User) {
@@ -51,7 +50,7 @@ public class User {
 
     public boolean isCustomer() { return customer; }
 
-    public Map<Article, Integer> getShoppingCart() { return shoppingCart; }
+    public ShoppingCart getShoppingCart() { return shoppingCart; }
 
     //Setter
     public void setUsername(String username) { this.username = username; }
@@ -67,6 +66,4 @@ public class User {
     public void setStaff(boolean staff)      { this.staff = staff; }
 
     public void setCustomer(boolean staff)   { this.customer = customer; }
-
-    public void setShoppingCart(Map<Article, Integer> shoppingCart) { this.shoppingCart = shoppingCart; }
 }
