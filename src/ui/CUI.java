@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+import domain.LogAdministration;
 import domain.Shop;
 import domain.exceptions.UserAlreadyExistsException;
 import valueObject.*;
@@ -94,12 +95,9 @@ public class CUI {
                     showArticleList(list);
                     break;
             }
-        }
+        } else if (logged_in_user.isCustomer()) {
 
-        else if (logged_in_user.isCustomer()) {
-
-        }
-        else if (logged_in_user.isStaff()){
+        } else if (logged_in_user.isStaff()){
 
         }
     }
