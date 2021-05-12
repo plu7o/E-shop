@@ -11,6 +11,7 @@ public class LogAdministration {
     private PrintWriter writer;
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
+    // 10 = Article, 20 = Staff, 30 = Customer | 1 = New, 2 = Edit, 3 = Delete
     public final int NEW_ARTICLE = 11;      //[staffNr, articleNr, ...?]
     public final int EDIT_ARTICLE = 12;     //[staffNr, articleNr, attribute, newValue...]
     public final int DELETE_ARTICLE = 13;   //[staffNr, articleNr]
@@ -24,7 +25,7 @@ public class LogAdministration {
     public final int EDIT_CUSTOMER = 32;    //[staffNr, userNr, attribute, newValue...]
     public final int DELETE_CUSTOMER = 33;  //[staffNr, userNr]
 
-    public final int TRANSACTION = 40;             //[userNr, price, articleNr, amount...]
+    public final int TRANSACTION = 40;      //[userNr, price, articleNr, amount...]
 
     public void log(int type, String[] data) {
         LocalDateTime now = LocalDateTime.now();
