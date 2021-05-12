@@ -1,14 +1,21 @@
 package domain;
+import domain.exceptions.ArticleAlreadyExistsException;
 import domain.exceptions.LoginFailedException;
 import domain.exceptions.UserAlreadyExistsException;
+import valueObject.Article;
+import valueObject.Invoice;
 import valueObject.User;
-
+import persistence.*;
+import java.io.IOException;
 import java.util.*;
 
 public class UserAdministration {
 
         private List<User> customers =  new Vector<User>();
         private List<User> staff  = new Vector<User>();
+        private List<User> users  = new Vector<User>();
+
+        private PersistenceManager pm = new FilePersistenceManager();
 
         public void add(User user) throws UserAlreadyExistsException {
                 if (user.isCustomer()) {
@@ -83,7 +90,7 @@ public class UserAdministration {
                 throw new LoginFailedException("Username or Password is incorrect");
         }
 
-        public void register(String name, String username, String password) throws UserAlreadyExistsException {
+        public int register(String name, String username, String password) throws UserAlreadyExistsException {
                 try {
                         User user = findUsername(username);
                         throw new UserAlreadyExistsException(user, "");
@@ -91,6 +98,7 @@ public class UserAdministration {
                 catch (LoginFailedException e) {
                         User user = new User(name, userIDGen(), username, password, false, true);
                         customers.add(user);
+                        return user.getUserNr();
                 }
         }
 
@@ -124,7 +132,6 @@ public class UserAdministration {
                 return staffID;
         }
 
-
         public void changeUserData(User user, String name, String username, String password, String address) {
                 if (!name.equals("")) {
                         user.setName(name);
@@ -140,17 +147,63 @@ public class UserAdministration {
                 }
         }
 
-        public void buy() { //TODO
-                /* und beim Kauf wird geleert
-                zeitgleich Artikel aus Bestand nehmen
-                 */
-                //User getShoppingCart;
-                //gekauft
-                //User shoppingCart = 0;
-                //System.out.println(name + date + article + "x" + number + "Einzelpreis:" + price + "Gesamtpreis:" + totalPrice);
+        public void readUserData(String data) throws IOException {
+                pm.openForReading(data);
+                User user;
+                do {
+                        user = pm.loadUser();
+                        if (user != null) {
+                                try {
+                                        add(user);
+                                } catch (UserAlreadyExistsException e) {
+
+                                }
+                        }
+                } while (user != null);
+                pm.close();
+        }
+
+        public void saveUser(String data) throws IOException {
+                users.add((User) customers);
+                users.add((User) staff);
+
+                pm.openForWriting(data);
+                for (User user : users) {
+                        pm.saveUser(user);
+                }
+                pm.close();
+        }
+
+        public void addToCart(User user, Article article, int amount) {
+                int updatedStock = article.getStock() - amount;
+                if (!(updatedStock <= 0)) {
+                        user.getShoppingCart().addToCart(article, amount);
+                        article.setStock(updatedStock);
+                } else if (updatedStock == 0) {
+                        user.getShoppingCart().addToCart(article, amount);
+                        article.setStock(updatedStock);
+                        article.setAvailable(false);
+                } else {
+                        //throw new ShoppingCartException
+                }
+        }
+
+        public void removeFromCart(User user, Article article, int amount) {
+                if (user.getShoppingCart().removeFromCart(article, amount)) {
+                        int newAmount = article.getStock() + amount;
+                        article.setStock(newAmount);
+                } else {
+                        // throw new Shopping cart Exception
+                }
+        }
+
+        public void emptyCart(User user) {
+                user.getShoppingCart().emptyCart();
+        }
+
+        public Invoice buy(User user) {
+                Invoice invoice = new Invoice(user);
+                user.getShoppingCart().emptyCart();
+                return invoice;
         }
 }
-
-
-
-
