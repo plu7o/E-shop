@@ -34,4 +34,77 @@ public class FilePersistenceManager implements PersistenceManager {
         }
         return true;
     }
+
+    private String readText() throws IOException{
+        if(reader != null) {
+            return reader.readLine();
+        } else {
+            return "";
+        }
+    }
+
+    private void writeText(String data) {
+        if(writer != null) {
+            writer.println(data);
+        }
+    }
+
+    public Article loadArticle() throws IOException {
+        String name = readText();
+        if (name == null) {
+            return null;
+        }
+        String articleNrStr = readText();
+        int articelNr = Integer.parseInt(articleNrStr);
+        String priceStr = readText();
+        double price = Double.parseDouble(priceStr);
+        String stockStr = readText();
+        int stock = Integer.parseInt(stockStr);
+        String availableStr = readText();
+        boolean available = Boolean.parseBoolean(availableStr);
+
+        return new Article(name, articelNr, price,  stock, available);
+    }
+
+
+    public boolean saveArticle(Article article) throws IOException {
+        writeText(article.getName());
+        writeText(article.getArticleNr() + "");
+        writeText(article.getPrice() + "");
+        writeText(article.getStock() + "");
+        writeText(article.isAvailable() + "");
+
+        return true;
+    }
+
+    public User loadUser() throws IOException {
+        String name = readText();
+        if (name == null) {
+            return null;
+        }
+        String userNrStr = readText();
+        int userNr = Integer.parseInt(userNrStr);
+        String username = readText();
+        String password = readText();
+        String staffStr = readText();
+        boolean staff = Boolean.parseBoolean(staffStr);
+        String customerStr = readText();
+        boolean customer = Boolean.parseBoolean(customerStr);
+        String address = readText();
+
+        return new User(name, userNr, username, password, staff, customer, address);
+
+    }
+
+    public boolean saveUser(User user) throws IOException {
+        writeText(user.getName() + "");
+        writeText(user.getUserNr() + "");
+        writeText(user.getUsername() + "");
+        writeText(user.getPassword() + "");
+        writeText(user.isStaff() + "");
+        writeText(user.isCustomer() + "");
+        writeText(user.getAddress() + "");
+
+        return true;
+    }
 }
