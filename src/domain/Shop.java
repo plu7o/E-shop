@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.exceptions.ArticleAlreadyExistsException;
+import domain.exceptions.ArticleNotFoundException;
 import domain.exceptions.LoginFailedException;
 import domain.exceptions.UserAlreadyExistsException;
 import valueObject.*;
@@ -18,10 +20,10 @@ public class Shop {
         this.file = file;
 
         articleAdministration = new ArticleAdministration();
-        articleAdministration.readArticleData(file + "_A");
+        articleAdministration.readArticleData(file + "_A.txt");
 
         userAdministration = new UserAdministration();
-        userAdministration.readUserData(file + "_U");
+        userAdministration.readUserData(file + "_U.txt");
 
         logAdmin = new LogAdministration();
     }
@@ -30,15 +32,25 @@ public class Shop {
         return articleAdministration.getAllAvailableArticles();
     }
 
+    public List<Article> getAllArticles(){
+        return articleAdministration.getAllArticles();
+    }
+
     public List<Article> searchArticle(String name) {
         return articleAdministration.searchArticle(name);
     }
 
-    public void addArticle(User loggedInUser, String name, double price, int stock, boolean available) {
+    public Article getArticle(int articleNr) throws ArticleNotFoundException {
+        return articleAdministration.getArticle(articleNr);
+    }
+
+    public void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.add(name, price, stock, available);
         String[] toLog = { String.valueOf(loggedInUser.getUserNr()), String.valueOf(newArticleNr) };
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
+
+
 
     public void deleteArticle(User loggedInUser, int articleNr) {
         articleAdministration.delete(articleNr);
@@ -46,7 +58,7 @@ public class Shop {
         logAdmin.log(logAdmin.DELETE_ARTICLE, toLog);
     }
 
-    public void updateArticleData(User loggedInUser, Article article, String name, float price, int stock, boolean available) {
+    public void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available) {
         List<String> toLog = new ArrayList<String>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
         toLog.add(String.valueOf(article.getArticleNr()));
@@ -66,6 +78,8 @@ public class Shop {
 
     public List<User> searchCustomer (int userID) { return userAdministration.searchCustomer(userID); }
 
+    public List<User> searchUsers(int userID) { return userAdministration.searchUsers(userID); }
+
     public List<User> searchStaff (int userID) { return userAdministration.searchStaff(userID); }
 
     public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
@@ -82,6 +96,14 @@ public class Shop {
         String[] toLog = { String.valueOf(loggedInUser.getUserNr()), String.valueOf(user.getUserNr()) };
         logAdmin.log(logAdmin.NEW_STAFF, toLog);
         return user;
+    }
+
+    public void deleteUser(User user) {
+        userAdministration.delete(user);
+    }
+
+    public User getUser(int userNr) {
+        return  userAdministration.getUser(userNr);
     }
 
     public void updateUserData(User loggedInUser, User user, String name, String username, String password, String address) {
@@ -109,11 +131,11 @@ public class Shop {
     }
 
     public void saveUser() throws IOException {
-        userAdministration.saveUser(file + "_U");
+        userAdministration.saveUser(file + "_U.txt");
     }
 
     public void saveArticle() throws IOException {
-       articleAdministration.saveArticle(file + "_A");
+       articleAdministration.saveArticle(file + "_A.txt");
     }
 
     public void addToCart(User user, Article article, int amount){

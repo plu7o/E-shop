@@ -63,7 +63,7 @@ public class Article {
 
     public void setArticleNr(int articleNr)     { this.articleNr = articleNr; }
 
-    public void setPrice(float price)           { this.price = price; }
+    public void setPrice(double price)           { this.price = price; }
 
     public void setStock(int stock)             { logStock(stock - this.stock); this.stock = stock; }
 

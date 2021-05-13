@@ -1,5 +1,5 @@
 package persistence;
-import valueObject.Article;
+import valueObject.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;

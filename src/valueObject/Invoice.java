@@ -14,33 +14,39 @@ public class Invoice {
     private Map<Article, Integer> shoppingCart = new HashMap<Article, Integer>();
     private String string;
     private String totalStr;
+    private String name;
 
-    public Invoice (Map<Article, Integer> shoppingCart, int userNr) {
-        this.userNr = userNr;
-        this.shoppingCart = shoppingCart;
+    public Invoice (User user) {
+        this.userNr = user.getUserNr();
+        this.name = user.getName();
+        this.shoppingCart = user.getShoppingCart().getCart();
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         this.date = format.format(now);
-        makeString();
     }
 
-    private void makeString() {
+    public String toString() {
         double price = 0;
         String str = "";
-        str += "--- Invoice ---";
-        str += "Kundennummer: " + userNr;
-        str += "Datum: " + date;
-        str += "";
+        str += "|----------INVOICE----------|\n";
+        str += "| Date: " + date + "          |\n";
+        str += "| UserID: " + userNr + "               |\n";
+        str += "| name: " + name + "                |\n";
+        str += "|---------------------------|\n";
+
         for (Article article : shoppingCart.keySet()) {
             price = article.getPrice() * shoppingCart.get(article);
-            str += article.getName() + " x" + shoppingCart.get(article) + " - " + turnToEuro(price);
+            str += "| " + article.getName() + " x" + shoppingCart.get(article) + "        " + turnToEuro(price) + " |\n";
             total += price;
         }
+
         this.totalStr = turnToEuro(total);
-        str += "Summe: " + totalStr;
-        str += "";
-        str += "---------------";
-        this.string = str;
+        str += "|---------------------------|\n";
+        str += "| Summe: " + totalStr + "             |\n";
+        str += "|---------------------------|\n";
+        str += "\n";
+        str += "Danke für Ihren einkauf!\n";
+        return str;
     }
 
     public void print() {

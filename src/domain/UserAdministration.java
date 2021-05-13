@@ -22,15 +22,13 @@ public class UserAdministration {
                         if (customers.contains(user)) {
                                throw new UserAlreadyExistsException(user, "");
                         }
-                        User customer = user;
-                        customers.add(customer);
+                        customers.add(user);
                 }
                 if (user.isStaff()) {
                         if (staff.contains(user)) {
                                 throw new UserAlreadyExistsException(user, "");
                         }
-                        User Employee = user;
-                        staff.add(Employee);
+                        staff.add(user);
                 }
         }
 
@@ -43,10 +41,39 @@ public class UserAdministration {
                 }
         }
 
+        private List<User> getAllUsers() {
+                users.addAll(customers);
+                users.addAll(staff);
+                return users;
+        }
+
+        public User getUser(int userNr) {
+                for (User user : getAllUsers()) {
+                        if (user.getUserNr() == userNr) {
+                            return user;
+                        }
+                }
+                return null;
+        }
+
         public List<User> searchCustomer(int userNr) {
                 List<User> search = new Vector<>();
 
                 Iterator<User> iter = customers.iterator();
+                while (iter.hasNext()) {
+                        User user = iter.next();
+                        if (user.getUserNr() == userNr)
+                                search.add(user);
+                }
+
+                Collections.sort(search, Comparator.comparingInt(valueObject.User::getUserNr));
+                return search;
+        }
+
+        public List<User> searchUsers(int userNr) {
+                List<User> search = new Vector<>();
+
+                Iterator<User> iter = getAllUsers().iterator();
                 while (iter.hasNext()) {
                         User user = iter.next();
                         if (user.getUserNr() == userNr)
@@ -67,7 +94,7 @@ public class UserAdministration {
                                 search.add(user);
                 }
 
-                Collections.sort(search, Comparator.comparingInt(valueObject.User::getUserNr));
+                Collections.sort(search, Comparator.comparing(valueObject.User::getName));
                 return search;
         }
 
@@ -129,6 +156,12 @@ public class UserAdministration {
         public int staffIDGen() {
                 double Id = Math.floor((Math.random()*100));
                 int staffID = (int)Id;
+                for (User user : staff) {
+                        while (staffID == user.getUserNr()) {
+                                Id = Math.floor((Math.random()*100));
+                                staffID = (int)Id;
+                        }
+                }
                 return staffID;
         }
 
@@ -164,11 +197,8 @@ public class UserAdministration {
         }
 
         public void saveUser(String data) throws IOException {
-                users.add((User) customers);
-                users.add((User) staff);
-
                 pm.openForWriting(data);
-                for (User user : users) {
+                for (User user : getAllUsers()) {
                         pm.saveUser(user);
                 }
                 pm.close();
@@ -190,8 +220,8 @@ public class UserAdministration {
 
         public void removeFromCart(User user, Article article, int amount) {
                 if (user.getShoppingCart().removeFromCart(article, amount)) {
-                        int newAmount = article.getStock() + amount;
-                        article.setStock(newAmount);
+                        article.addStock(amount);
+                        article.setAvailable(true);
                 } else {
                         // throw new Shopping cart Exception
                 }
@@ -203,7 +233,6 @@ public class UserAdministration {
 
         public Invoice buy(User user) {
                 Invoice invoice = new Invoice(user);
-                user.getShoppingCart().emptyCart();
                 return invoice;
         }
 }

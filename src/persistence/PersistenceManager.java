@@ -1,6 +1,6 @@
 package persistence;
 import java.io.IOException;
-import valueObject.Article;
+import valueObject.*;
 
 public interface PersistenceManager {
     public void openForReading(String dataSource) throws IOException;

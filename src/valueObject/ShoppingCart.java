@@ -36,7 +36,7 @@ public class ShoppingCart {
         cart.clear();
     }
 
-    public Map<Article, Integer> getWarenkorb() {
+    public Map<Article, Integer> getCart() {
         return cart;
     }
 
@@ -47,4 +47,14 @@ public class ShoppingCart {
         }
         return total;
     }
-}
+
+    public String toString() {
+        String str = "";
+        for (Article article : cart.keySet()) {
+            str += article  + " | Amount: " + cart.get(article) + "\n";
+        }
+        return str;
+    }
+
+
+  }

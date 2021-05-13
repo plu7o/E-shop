@@ -12,11 +12,11 @@ public class User {
 
     private ShoppingCart shoppingCart; // TODO
 
-    public User (String name, int userNr, String username, String password) {
-        this(name, userNr, username, password, false, false);
+    public User (String name, int userNr, String username, String password, boolean staff, boolean customer) {
+        this(name, userNr, username, password, staff, customer, "");
     }
 
-    public User (String name, int userNr, String username, String password, boolean staff, boolean customer) {
+    public User (String name, int userNr, String username, String password, boolean staff, boolean customer, String address) {
         this.name = name;
         this.userNr = userNr;
         this.username = username;

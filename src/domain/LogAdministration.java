@@ -88,7 +88,7 @@ public class LogAdministration {
                 break;
         }
         try {
-            writer = new PrintWriter(new BufferedWriter(new FileWriter("LOG")));
+            writer = new PrintWriter(new BufferedWriter(new FileWriter("LOG.txt")));
         } catch (IOException e) {
             e.printStackTrace();
         }

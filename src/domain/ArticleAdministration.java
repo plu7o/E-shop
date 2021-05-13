@@ -1,5 +1,7 @@
 package domain;
 import domain.exceptions.ArticleAlreadyExistsException;
+import domain.exceptions.ArticleNotFoundException;
+import domain.exceptions.LoginFailedException;
 import valueObject.Article;
 import valueObject.Invoice;
 import valueObject.ShoppingCart;
@@ -15,8 +17,11 @@ public class ArticleAdministration {
 
     private PersistenceManager pm = new FilePersistenceManager();
 
-    public int add(String name, double price, int stock, boolean available) {
+    public int add(String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         Article article = new Article(name, articleNrGen(), price, stock, available);
+        if (inventory.contains(article)) {
+            throw new ArticleAlreadyExistsException(article, "");
+        }
         inventory.add(article);
         return article.getArticleNr();
     }
@@ -34,30 +39,15 @@ public class ArticleAdministration {
         if (position >= 0) { inventory.remove(position); }
     }
 
-    public void changeArticleData(Article article, String name, float price, int stock, boolean available) {
+
+    public void changeArticleData(Article article, String name, double price, int stock, boolean available) {
         if (!name.equals("")) { article.setName(name); }
         if (price > 0)        { article.setPrice(price); }
         if (stock != -1)      { article.setStock(stock); }
         article.setAvailable(available);
     }
 
-    public boolean buy(User user) {
-        Map<Article, Integer> shoppingCart = user.getShoppingCart().getWarenkorb();
-        for (Article article : shoppingCart.keySet()) {
-            if (article.getStock() < shoppingCart.get(article)) {
-                System.out.println("Du willst mehr, als wir haben.");
-                return false;
-            }
-        }
-        Invoice invoice = new Invoice(user);
-        invoice.print();
-        // TODO bezahlen ( preis = invoice.getTotal() )
-        // Artikelanzahl im Inventar reduzieren
-        for (Article article : shoppingCart.keySet()) {
-            inventory.get(getPosOfArticleViaArticleNr(article.getArticleNr())).reduceStock(shoppingCart.get(article));
-        }
-        return true;
-    }
+
 
     private int getPosOfArticleViaArticleNr(int articleNr) {
         for (int i = 0; i < inventory.size(); i++) {
@@ -176,6 +166,15 @@ public class ArticleAdministration {
         }
         Collections.sort(search, Comparator.comparingInt(Article::getArticleNr));
         return search;
+    }
+
+    public Article getArticle(int articleNr) throws ArticleNotFoundException {
+        for (Article article : inventory) {
+            if ((article).getArticleNr() == articleNr) {
+                return article;
+            }
+        }
+        return null;
     }
 
     public void readArticleData(String data) throws IOException {
