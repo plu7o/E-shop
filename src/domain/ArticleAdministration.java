@@ -39,15 +39,12 @@ public class ArticleAdministration {
         if (position >= 0) { inventory.remove(position); }
     }
 
-
     public void changeArticleData(Article article, String name, double price, int stock, boolean available) {
         if (!name.equals("")) { article.setName(name); }
         if (price > 0)        { article.setPrice(price); }
         if (stock != -1)      { article.setStock(stock); }
         article.setAvailable(available);
     }
-
-
 
     private int getPosOfArticleViaArticleNr(int articleNr) {
         for (int i = 0; i < inventory.size(); i++) {
