@@ -36,7 +36,7 @@ public class FilePersistenceManager implements PersistenceManager {
     }
 
     private String readText() throws IOException{
-        if(reader != null) {
+        if (reader != null) {
             return reader.readLine();
         } else {
             return "";
@@ -44,7 +44,7 @@ public class FilePersistenceManager implements PersistenceManager {
     }
 
     private void writeText(String data) {
-        if(writer != null) {
+        if (writer != null) {
             writer.println(data);
         }
     }
@@ -65,7 +65,6 @@ public class FilePersistenceManager implements PersistenceManager {
 
         return new Article(name, articelNr, price,  stock, available);
     }
-
 
     public boolean saveArticle(Article article) throws IOException {
         writeText(article.getName());
@@ -93,7 +92,6 @@ public class FilePersistenceManager implements PersistenceManager {
         String address = readText();
 
         return new User(name, userNr, username, password, staff, customer, address);
-
     }
 
     public boolean saveUser(User user) throws IOException {
@@ -104,7 +102,11 @@ public class FilePersistenceManager implements PersistenceManager {
         writeText(user.isStaff() + "");
         writeText(user.isCustomer() + "");
         writeText(user.getAddress() + "");
+        return true;
+    }
 
+    public boolean saveLog(String log) throws IOException {
+        writeText(log + "");
         return true;
     }
 }
