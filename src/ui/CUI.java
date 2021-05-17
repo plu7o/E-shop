@@ -87,7 +87,7 @@ public class CUI {
                         | Add Customer       [4] |
                         | Add Staff          [5] |
                         | Delete             [6] |
-                        | Edit User          [7] |
+                        | Edit User          [7] |           
                         +------------------------+
                         | Back               [x] |
                         +------------------------+
@@ -210,7 +210,7 @@ public class CUI {
                     }
                     break;
                 case "5":
-                    System.out.println(logged_in_user.getShoppingCart());
+                    System.out.println(logged_in_user.getShoppingCart() + " | " + Double.toString(logged_in_user.getShoppingCart().getTotal()));
                     break;
                 case "6":
                     shop.emptyCart(logged_in_user);
@@ -219,13 +219,13 @@ public class CUI {
                     Invoice invoice = shop.buy(logged_in_user);
                     System.out.println(invoice);
                     shop.emptyCart(logged_in_user);
-                    shop.saveUser();
-                    shop.saveArticle();
                     break;
                 case "x":
                     System.out.println("successfully logged out");
                     logged_in_user = null;
                     break;
+                default:
+                    System.out.println("Wrong command see menu!");
             }
         } else if (logged_in_user.isStaff()) {
             switch (input) {
@@ -396,7 +396,7 @@ public class CUI {
                     System.out.println("Wrong command see menu!");
                 }
                 break;
-            case  "4":
+            case "4":
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -460,7 +460,7 @@ public class CUI {
             }
         }
     }
-    
+
     private void showUserList(List<User> users){
         if(users.isEmpty()) {
             System.out.println("List is empty :(");
