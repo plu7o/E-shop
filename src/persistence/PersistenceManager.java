@@ -14,4 +14,6 @@ public interface PersistenceManager {
     public User loadUser() throws IOException;
 
     public boolean saveUser(User user) throws IOException;
+
+    public boolean saveLog(String log) throws IOException;
 }
