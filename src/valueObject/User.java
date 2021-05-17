@@ -35,6 +35,10 @@ public class User {
             return false;
     }
 
+    public String toString() {
+        return ("| UserID: " + userNr + " | Name: " + name + " | Username: "+ username + " | Address: " + address + " | ");
+    }
+
     //Getter
     public String getUsername() { return username; }
 
