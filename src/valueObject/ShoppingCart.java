@@ -1,6 +1,5 @@
 package valueObject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ShoppingCart {
@@ -32,13 +31,9 @@ public class ShoppingCart {
         return succeeded;
     }
 
-    public void emptyCart() {
-        cart.clear();
-    }
+    public void emptyCart() { cart.clear(); }
 
-    public Map<Article, Integer> getCart() {
-        return cart;
-    }
+    public Map<Article, Integer> getCart() { return cart; }
 
     public double getTotal() {
         double total = 0;
@@ -55,6 +50,4 @@ public class ShoppingCart {
         }
         return str;
     }
-
-
   }
