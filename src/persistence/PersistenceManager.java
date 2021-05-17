@@ -3,17 +3,17 @@ import java.io.IOException;
 import valueObject.*;
 
 public interface PersistenceManager {
-    public void openForReading(String dataSource) throws IOException;
-    public void openForWriting(String dataSource) throws IOException;
-    public boolean close();
+    void openForReading(String dataSource) throws IOException;
+    void openForWriting(String dataSource) throws IOException;
+    boolean close();
 
-    public Article loadArticle() throws IOException;
+    Article loadArticle() throws IOException;
 
-    public boolean saveArticle(Article article) throws IOException;
+    boolean saveArticle(Article article) throws IOException;
 
-    public User loadUser() throws IOException;
+    User loadUser() throws IOException;
 
-    public boolean saveUser(User user) throws IOException;
+    boolean saveUser(User user) throws IOException;
 
-    public boolean saveLog(String log) throws IOException;
+    boolean saveLog(String log) throws IOException;
 }
