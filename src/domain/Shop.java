@@ -46,21 +46,20 @@ public class Shop {
 
     public void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.add(name, price, stock, available);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), String.valueOf(newArticleNr) };
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr) };
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
 
-
-
     public void deleteArticle(User loggedInUser, int articleNr) {
         articleAdministration.delete(articleNr);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), String.valueOf(articleNr) };
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(articleNr) };
         logAdmin.log(logAdmin.DELETE_ARTICLE, toLog);
     }
 
     public void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available) {
         List<String> toLog = new ArrayList<String>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
+        toLog.add(String.valueOf(loggedInUser.getUsername()));
         toLog.add(String.valueOf(article.getArticleNr()));
         if (article.getName().equals(name) && !name.equals("")) { toLog.add("name: " + name); }
         if (article.getPrice() != price    && price > 0)        { toLog.add("price: " + price); }
@@ -85,7 +84,7 @@ public class Shop {
     public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.userIDGen(), username, password, false, true);
         userAdministration.add(user);
-        String[] toLog = { String.valueOf(user.getUserNr()) };
+        String[] toLog = { String.valueOf(user.getUserNr()), user.getUsername() };
         logAdmin.log(logAdmin.NEW_CUSTOMER, toLog);
         return user;
     }
@@ -93,7 +92,7 @@ public class Shop {
     public User addStaff(User loggedInUser, String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.staffIDGen(), username, password, true, false);
         userAdministration.add(user);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), String.valueOf(user.getUserNr()) };
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()) };
         logAdmin.log(logAdmin.NEW_STAFF, toLog);
         return user;
     }
@@ -109,6 +108,7 @@ public class Shop {
     public void updateUserData(User loggedInUser, User user, String name, String username, String password, String address) {
         List<String> toLog = new ArrayList<String>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
+        toLog.add(String.valueOf(loggedInUser.getUsername()));
         toLog.add(String.valueOf(user.getUserNr()));
         if (!user.getName().equals(name)         && !name.equals(""))     { toLog.add("name: " + name); }
         if (!user.getUsername().equals(username) && !username.equals("")) { toLog.add("username: " + username); }
