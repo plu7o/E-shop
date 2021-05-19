@@ -1,7 +1,6 @@
 package domain;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import domain.exceptions.ArticleAlreadyExistsException;
 import domain.exceptions.ArticleNotFoundException;
@@ -16,7 +15,7 @@ public class Shop {
     private UserAdministration userAdministration;
     private final LogAdministration logAdmin;
 
-    public Shop(String file) throws IOException, UserAlreadyExistsException {
+    public Shop(String file) throws IOException {
         this.file = file;
 
         articleAdministration = new ArticleAdministration();
@@ -59,7 +58,7 @@ public class Shop {
     public void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available) {
         List<String> toLog = new ArrayList<String>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
-        toLog.add(String.valueOf(loggedInUser.getUsername()));
+        toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(article.getArticleNr()));
         if (article.getName().equals(name) && !name.equals("")) { toLog.add("name: " + name); }
         if (article.getPrice() != price    && price > 0)        { toLog.add("price: " + price); }
@@ -69,6 +68,18 @@ public class Shop {
         toLog.toArray(toLogArr);
         logAdmin.log(logAdmin.EDIT_ARTICLE, toLogArr);
         articleAdministration.changeArticleData(article, name, price, stock, available);
+    }
+
+    public void addStock(User loggedInUser, Article article, int amount) {
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), String.valueOf(amount) };
+        logAdmin.log(logAdmin.ARTICLE_STOCK, toLog);
+        article.addStock(amount);
+    }
+
+    public void reduceStock(User loggedInUser, Article article, int amount) {
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), "-" + amount };
+        logAdmin.log(logAdmin.ARTICLE_STOCK, toLog);
+        article.reduceStock(amount);
     }
 
     public List<User> getCustomers() { return userAdministration.getCustomerList(); }
@@ -84,7 +95,7 @@ public class Shop {
     public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.userIDGen(), username, password, false, true);
         userAdministration.add(user);
-        String[] toLog = { String.valueOf(user.getUserNr()), user.getUsername() };
+        String[] toLog = { "", "", String.valueOf(user.getUserNr()), user.getUsername() };
         logAdmin.log(logAdmin.NEW_CUSTOMER, toLog);
         return user;
     }
@@ -92,23 +103,26 @@ public class Shop {
     public User addStaff(User loggedInUser, String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.staffIDGen(), username, password, true, false);
         userAdministration.add(user);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()) };
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername() };
         logAdmin.log(logAdmin.NEW_STAFF, toLog);
         return user;
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(User loggedInUser, User user) {
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername() };
+        if (user.isCustomer()) { logAdmin.log(logAdmin.DELETE_CUSTOMER, toLog); }
+        else                   { logAdmin.log(logAdmin.DELETE_STAFF, toLog); }
         userAdministration.delete(user);
     }
 
     public User getUser(int userNr) {
-        return  userAdministration.getUser(userNr);
+        return userAdministration.getUser(userNr);
     }
 
     public void updateUserData(User loggedInUser, User user, String name, String username, String password, String address) {
         List<String> toLog = new ArrayList<String>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
-        toLog.add(String.valueOf(loggedInUser.getUsername()));
+        toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(user.getUserNr()));
         if (!user.getName().equals(name)         && !name.equals(""))     { toLog.add("name: " + name); }
         if (!user.getUsername().equals(username) && !username.equals("")) { toLog.add("username: " + username); }
@@ -151,6 +165,20 @@ public class Shop {
     }
 
     public Invoice buy(User user) {
-        return userAdministration.buy(user);
+        Invoice invoice = userAdministration.buy(user);
+
+        List<String> toLog = new ArrayList<String>();
+        toLog.add(String.valueOf(user.getUserNr()));
+        toLog.add(user.getUsername());
+        toLog.add(invoice.getTotalString());
+        Map<Article, Integer> shoppingCart = user.getShoppingCart().getCart();
+        for (Article article : shoppingCart.keySet()) {
+            toLog.add(article.getArticleNr() + ": " + shoppingCart.get(article));
+        }
+        String[] toLogArr = new String[toLog.size()];
+        toLog.toArray(toLogArr);
+        logAdmin.log(logAdmin.TRANSACTION, toLogArr);
+
+        return invoice;
     }
 }
