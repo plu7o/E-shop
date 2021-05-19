@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FilePersistenceManager implements PersistenceManager {
     private BufferedReader reader = null;
@@ -17,7 +20,11 @@ public class FilePersistenceManager implements PersistenceManager {
     }
 
     public void openForWriting(String file) throws IOException {
-        writer = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        writer = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+    }
+
+    public void openForAppending(String file) throws IOException {
+        writer = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
     }
 
     public boolean close() {
@@ -62,8 +69,13 @@ public class FilePersistenceManager implements PersistenceManager {
         int stock = Integer.parseInt(stockStr);
         String availableStr = readText();
         boolean available = Boolean.parseBoolean(availableStr);
-
-        return new Article(name, articelNr, price,  stock, available);
+        String stockLogStr = readText();
+        Article article = new Article(name, articelNr, price,  stock, available);
+        if (stockLogStr != null) {
+            List<String> stockLog = new ArrayList<String>(Arrays.asList(stockLogStr.split("#")));
+            article.setStockLog(stockLog);
+        }
+        return article;
     }
 
     public boolean saveArticle(Article article) throws IOException {
@@ -72,7 +84,7 @@ public class FilePersistenceManager implements PersistenceManager {
         writeText(article.getPrice() + "");
         writeText(article.getStock() + "");
         writeText(article.isAvailable() + "");
-
+        writeText(String.join("#", article.getStockLog()) + "");
         return true;
     }
 
