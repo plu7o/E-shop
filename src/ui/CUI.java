@@ -71,6 +71,9 @@ public class CUI {
                         | Add                [3] |
                         | Delete             [4] |
                         | Edit Article       [5] |
+                        | Add Stock          [6] |
+                        | Remove Stock       [7] |
+                        | Show Article log   [8] |
                         +------------------------+
                         | Back               [x] |
                         +------------------------+
@@ -87,7 +90,7 @@ public class CUI {
                         | Add Customer       [4] |
                         | Add Staff          [5] |
                         | Delete             [6] |
-                        | Edit User          [7] |           
+                        | Edit User          [7] |
                         +------------------------+
                         | Back               [x] |
                         +------------------------+
@@ -189,7 +192,7 @@ public class CUI {
                     } catch (ArticleNotFoundException e) {
                         System.out.println(e.getMessage());
                     } catch(NumberFormatException e2) {
-                        System.out.println("Wrong command see menu!");
+                         System.out.println("Wrong input!");
                     }
                     break;
                 case "4":
@@ -206,7 +209,7 @@ public class CUI {
                     } catch (ArticleNotFoundException e) {
                         System.out.println(e.getMessage());
                     } catch(NumberFormatException e2) {
-                        System.out.println("Wrong command see menu!");
+                        System.out.println("Wrong input!");
                     }
                     break;
                 case "5":
@@ -260,7 +263,7 @@ public class CUI {
                     list = shop.searchUsers(userNr);
                     showUserList(list);
                 } catch(NumberFormatException e2) {
-                    System.out.println(e2.getMessage());
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "2":
@@ -309,9 +312,9 @@ public class CUI {
                     userNrStr = readInput();
                     userNr = Integer.parseInt(userNrStr);
                     user = shop.getUser(userNr);
-                    shop.deleteUser(user);
+                    shop.deleteUser(logged_in_user, user);
                 } catch (NumberFormatException e2) {
-                    System.out.println(e2.getMessage());
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "7":
@@ -336,7 +339,7 @@ public class CUI {
                     shop.updateUserData(logged_in_user, user, name, username, password, address);
                     System.out.println("User Updated!");
                 } catch (NumberFormatException e2) {
-                    System.out.println("Wrong command see menu!");
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "x":
@@ -374,18 +377,15 @@ public class CUI {
 
                     System.out.print(prefix() + "Price > ");
                     String priceStr = readInput();
-                    if (!priceStr.equals("")) { price = Double.parseDouble(priceStr); }
-                    else                      { price = 0.0f; }
+                    price = Double.parseDouble(priceStr);
 
                     System.out.print(prefix() + "Stock > ");
                     String stockStr = readInput();
-                    if (!stockStr.equals("")) { stock = Integer.parseInt(stockStr); }
-                    else                      { stock = -1; }
+                    stock = Integer.parseInt(stockStr);
 
                     System.out.print(prefix() + "Available > ");
                     String availableStr = readInput();
-                    if (!availableStr.equals("")) { available = Boolean.parseBoolean(availableStr); }
-                    else                          { available = false; }
+                    available = Boolean.parseBoolean(availableStr);
 
                     try {
                         shop.addArticle(logged_in_user, articleName, price, stock, available);
@@ -393,7 +393,7 @@ public class CUI {
                         System.out.println(e.getMessage());
                     }
                 } catch (NumberFormatException e2) {
-                    System.out.println("Wrong command see menu!");
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "4":
@@ -404,7 +404,7 @@ public class CUI {
                     shop.deleteArticle(logged_in_user, articleNr);
                     System.out.println("Article Deleted!");
                 } catch (NumberFormatException e2) {
-                    System.out.println("Wrong command see menu!");
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "5":
@@ -424,22 +424,61 @@ public class CUI {
                     System.out.print(prefix() + "Price > ");
                     String priceStr = readInput();
                     if (!priceStr.equals("")) { price = Double.parseDouble(priceStr); }
-                    else { price = 0.0f; }
+                    else                      { price = 0.0f; }
 
                     System.out.print(prefix() + "Stock > ");
                     String stockStr = readInput();
                     if (!stockStr.equals("")) { stock = Integer.parseInt(stockStr); }
-                    else { stock = -1; }
+                    else                      { stock = -1; }
 
                     System.out.print(prefix() + "Available > ");
                     String availableStr = readInput();
                     if (!stockStr.equals("")) { available = Boolean.parseBoolean(availableStr); }
-                    else                      { available = false; }
+                    else                      { available = true; }
 
                     shop.updateArticleData(logged_in_user, article, articleName, price, stock, available);
                     System.out.println("Article Updated!");
                 } catch (NumberFormatException e2) {
-                    System.out.println("Wrong command see menu!");
+                    System.out.println("Wrong input!");
+                }
+                break;
+            case "6":
+                try {
+                    System.out.print(prefix() + "Article-Nr > ");
+                    String articleNrStr = readInput();
+                    articleNr = Integer.parseInt(articleNrStr);
+                    Article article = shop.getArticle(articleNr);
+                    System.out.println(prefix() + "Amount >  ");
+                    String amountStr = readInput();
+                    int amount = Integer.parseInt(amountStr);
+                    shop.addStock(logged_in_user, article, amount);
+                    System.out.println("Stock added!");
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong input!");
+                }
+            case "7":
+                try {
+                    System.out.print(prefix() + "Article-Nr > ");
+                    String articleNrStr = readInput();
+                    articleNr = Integer.parseInt(articleNrStr);
+                    Article article = shop.getArticle(articleNr);
+                    System.out.println(prefix() + "Amount >  ");
+                    String amountStr = readInput();
+                    int amount = Integer.parseInt(amountStr);
+                    shop.reduceStock(logged_in_user, article, amount);
+                    System.out.println("Stock reduced!");
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong input!");
+                }
+               case "8":
+                try {
+                    System.out.print(prefix() + "Article-Nr > ");
+                    String articleNrStr = readInput();
+                    articleNr = Integer.parseInt(articleNrStr);
+                    Article article = shop.getArticle(articleNr);
+                    printArticleLog(article.getStockLog());
+                } catch (NumberFormatException e) {
+                    System.out.println("Wrong input!");
                 }
                 break;
             case "x":
@@ -467,6 +506,15 @@ public class CUI {
         } else {
             for (User user : users) {
                 System.out.println(user);
+            }
+        }
+    }
+
+    public void printArticleLog(List<String> log) {
+        if (log.isEmpty()) {
+            System.out.println("List is empty :(");
+            for (String s : log) {
+                System.out.println(s);
             }
         }
     }
@@ -525,7 +573,7 @@ public class CUI {
         System.out.println("Bye see you next time! :) ");
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         CUI cui;
         try {
             //cui wird erzeugt
