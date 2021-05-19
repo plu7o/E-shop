@@ -11,8 +11,9 @@ public class Article {
     private double price;
     private int stock;
     private boolean available;
+
     private List<String> stockLog = new ArrayList<String>();
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public Article(String name, int articleNr, double price, int stock, boolean available) {
         this.articleNr = articleNr;
@@ -24,7 +25,8 @@ public class Article {
 
     public String toString() {
         String availability = available ? "in stock" : "SOLD OUT";
-        return ("Nr: " + articleNr + " | Article-name: " + name + " | Price: " + price + "€" + " | Availability: " + availability);
+
+        return ("Nr: " + articleNr + " | Article-name: " + name + " | Price: " + price + "€" + " | Availability: " + availability  );
     }
 
     public boolean equals(Object otherArticle) {
@@ -37,8 +39,9 @@ public class Article {
 
     private void logStock(int amount) {
         LocalDateTime now = LocalDateTime.now();
-        stockLog.add(format.format(now) + " " + amount);
+        stockLog.add(format.format(now) + " | amount: " + amount + " ");
     }
+
 
     //Modifier
     public void addStock(int amount)    { this.stock += amount; logStock(amount); }
@@ -68,4 +71,6 @@ public class Article {
     public void setStock(int stock)             { logStock(stock - this.stock); this.stock = stock; }
 
     public void setAvailable(boolean available) { this.available = available; }
+
+    public void setStockLog(List<String> log)   { this.stockLog = log;}
 }
