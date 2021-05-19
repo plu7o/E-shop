@@ -5,6 +5,7 @@ import valueObject.*;
 public interface PersistenceManager {
     void openForReading(String dataSource) throws IOException;
     void openForWriting(String dataSource) throws IOException;
+    void openForAppending(String dataSource) throws IOException;
     boolean close();
 
     Article loadArticle() throws IOException;
