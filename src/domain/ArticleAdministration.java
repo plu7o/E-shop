@@ -28,7 +28,7 @@ public class ArticleAdministration {
 
     public void addArticle(Article article) throws ArticleAlreadyExistsException {
         if (inventory.contains(article)) {
-                throw new ArticleAlreadyExistsException(article, "");
+            throw new ArticleAlreadyExistsException(article, "");
         }
         Article newArticle = article;
         inventory.add(newArticle);
@@ -42,7 +42,7 @@ public class ArticleAdministration {
     public void changeArticleData(Article article, String name, double price, int stock, boolean available) {
         if (!name.equals("")) { article.setName(name); }
         if (price > 0)        { article.setPrice(price); }
-        if (stock != -1)      { article.setStock(stock); }
+        if (stock >= 0)      { article.setStock(stock); }
         article.setAvailable(available);
     }
 
