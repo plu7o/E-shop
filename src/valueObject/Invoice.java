@@ -26,6 +26,10 @@ public class Invoice {
         this.date = format.format(now);
     }
 
+    /**
+     * Text
+     * @return
+     */
     public String toString() {
         double price = 0;
         String str = "";
@@ -46,7 +50,8 @@ public class Invoice {
             articleName = article.getName();
             articleAmount = shoppingCart.get(article);
             spaceAmount = 23 - priceStr.length() - articleName.length() - String.valueOf(articleAmount).length();
-            spaces = String.join("", Collections.nCopies(spaceAmount, " "));
+            if (spaceAmount >= 0) { spaces = String.join("", Collections.nCopies(spaceAmount, " ")); }
+            else                  { spaces = ""; }
             str += "| " + articleName + " x" + articleAmount + spaces + priceStr + " |\n";
             total += price;
         }
