@@ -2,7 +2,6 @@ package ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.List;
 
 import domain.Shop;
@@ -243,7 +242,7 @@ public class CUI {
         }
     }
 
-    private void processsUserAdministartionInput(String input) throws IOException {
+    private void processUserAdministrationInput(String input) throws IOException {
         List<User> list;
         int userNr;
         String name;
@@ -354,10 +353,15 @@ public class CUI {
     private void processsArticleAdministartionInput(String input) throws IOException, ArticleNotFoundException {
         List<Article> list;
         String articleName;
+        String priceStr;
+        String stockStr;
+        String availableStr;
+        String packageSizeStr;
         int articleNr;
         double price;
         int stock;
         boolean available;
+        int packageSize;
 
         switch (input) {
             case "1":
@@ -372,25 +376,57 @@ public class CUI {
                 break;
             case "3":
                 try {
-                    System.out.print(prefix() + "Article-name > ");
-                    articleName = readInput();
+                    System.out.print(prefix() + "Select Article type [article] | [mass] > ");
+                    String type = readInput();
+                    switch (type) {
+                        case "article":
+                            System.out.print(prefix() + "Article-name > ");
+                            articleName = readInput();
 
-                    System.out.print(prefix() + "Price > ");
-                    String priceStr = readInput();
-                    price = Double.parseDouble(priceStr);
+                            System.out.print(prefix() + "Price > ");
+                            priceStr = readInput();
+                            price = Double.parseDouble(priceStr);
 
-                    System.out.print(prefix() + "Stock > ");
-                    String stockStr = readInput();
-                    stock = Integer.parseInt(stockStr);
+                            System.out.print(prefix() + "Stock > ");
+                            stockStr = readInput();
+                            stock = Integer.parseInt(stockStr);
 
-                    System.out.print(prefix() + "Available > ");
-                    String availableStr = readInput();
-                    available = Boolean.parseBoolean(availableStr);
+                            System.out.print(prefix() + "Available > ");
+                            availableStr = readInput();
+                            available = Boolean.parseBoolean(availableStr);
 
-                    try {
-                        shop.addArticle(logged_in_user, articleName, price, stock, available);
-                    } catch (ArticleAlreadyExistsException e) {
-                        System.out.println(e.getMessage());
+                            try {
+                                shop.addArticle(logged_in_user, articleName, price, stock, available);
+                            } catch (ArticleAlreadyExistsException e) {
+                                System.out.println(e.getMessage());
+                            }
+                            break;
+                        case "mass":
+                            System.out.print(prefix() + "Article-name > ");
+                            articleName = readInput();
+
+                            System.out.print(prefix() + "Price > ");
+                            priceStr = readInput();
+                            price = Double.parseDouble(priceStr);
+
+                            System.out.print(prefix() + "Stock > ");
+                            stockStr = readInput();
+                            stock = Integer.parseInt(stockStr);
+
+                            System.out.print(prefix() + "Available > ");
+                            availableStr = readInput();
+                            available = Boolean.parseBoolean(availableStr);
+
+                            System.out.print(prefix() + "Package-Size > ");
+                            packageSizeStr = readInput();
+                            packageSize = Integer.parseInt(packageSizeStr);
+
+                            try {
+                                shop.addMassArticle(logged_in_user, articleName, price, stock, available, packageSize);
+                            } catch (ArticleAlreadyExistsException e) {
+                                System.out.println(e.getMessage());
+                            }
+                            break;
                     }
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
@@ -422,19 +458,16 @@ public class CUI {
                     articleName = readInput();
 
                     System.out.print(prefix() + "Price > ");
-                    String priceStr = readInput();
-                    if (!priceStr.equals("")) { price = Double.parseDouble(priceStr); }
-                    else                      { price = 0.0f; }
+                    priceStr = readInput();
+                    price = Double.parseDouble(priceStr);
 
                     System.out.print(prefix() + "Stock > ");
-                    String stockStr = readInput();
-                    if (!stockStr.equals("")) { stock = Integer.parseInt(stockStr); }
-                    else                      { stock = -1; }
+                    stockStr = readInput();
+                    stock = Integer.parseInt(stockStr);
 
                     System.out.print(prefix() + "Available > ");
-                    String availableStr = readInput();
-                    if (!stockStr.equals("")) { available = Boolean.parseBoolean(availableStr); }
-                    else                      { available = true; }
+                    availableStr = readInput();
+                    available = Boolean.parseBoolean(availableStr);
 
                     shop.updateArticleData(logged_in_user, article, articleName, price, stock, available);
                     System.out.println("Article Updated!");
@@ -496,6 +529,7 @@ public class CUI {
         } else {
             for (Article article : articleList) {
                 System.out.println(article);
+
             }
         }
     }
@@ -553,7 +587,7 @@ public class CUI {
                 input = readInput();
                 // verarbeitet den input
                 if (userAdministration) {
-                    processsUserAdministartionInput(input);
+                    processUserAdministrationInput(input);
                 } else if (articleAdministration) {
                     processsArticleAdministartionInput(input);
                 } else {
@@ -567,6 +601,7 @@ public class CUI {
         try {
             shop.saveUser();
             shop.saveArticle();
+            shop.saveMassArticle();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
