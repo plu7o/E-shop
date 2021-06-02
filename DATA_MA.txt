@@ -1,6 +1,7 @@
-TestSixPack
-107
-19.99
-15
+Kasten Bier
+110
+24.95
+240
 true
-6
+12
+
