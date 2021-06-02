@@ -12,7 +12,7 @@ public class Article {
     private int stock;
     private boolean available;
 
-    private List<String> stockLog = new ArrayList<String>();
+    private List<String> stockLog = new ArrayList<>();
     private final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public Article(String name, int articleNr, double price, int stock, boolean available) {
@@ -30,18 +30,18 @@ public class Article {
     }
 
     public boolean equals(Object otherArticle) {
-        if(otherArticle instanceof Article) {
+        if (otherArticle instanceof Article) {
             return ((this.articleNr == ((Article) otherArticle).articleNr)
                     && (this.name.equals(((Article) otherArticle).name)));
-        } else
+        } else {
             return false;
+        }
     }
 
     private void logStock(int amount) {
         LocalDateTime now = LocalDateTime.now();
         stockLog.add(format.format(now) + " | amount: " + amount + " ");
     }
-
 
     //Modifier
     public void addStock(int amount)    { this.stock += amount; logStock(amount); }
@@ -66,7 +66,7 @@ public class Article {
 
     public void setArticleNr(int articleNr)     { this.articleNr = articleNr; }
 
-    public void setPrice(double price)           { this.price = price; }
+    public void setPrice(double price)          { this.price = price; }
 
     public void setStock(int stock)             { logStock(stock - this.stock); this.stock = stock; }
 
