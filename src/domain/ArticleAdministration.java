@@ -1,21 +1,16 @@
 package domain;
 import domain.exceptions.ArticleAlreadyExistsException;
 import domain.exceptions.ArticleNotFoundException;
-import domain.exceptions.LoginFailedException;
-import valueObject.Article;
-import valueObject.Invoice;
-import valueObject.ShoppingCart;
-import valueObject.User;
+import valueObject.*;
 import persistence.*;
 import java.io.IOException;
 
-import java.util.Collections;
 import java.util.*;
 
 public class ArticleAdministration {
     private List<Article> inventory = new ArrayList<>();
 
-    private PersistenceManager pm = new FilePersistenceManager();
+    private final PersistenceManager pm = new FilePersistenceManager();
 
     public int add(String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         Article article = new Article(name, articleNrGen(), price, stock, available);
@@ -26,14 +21,29 @@ public class ArticleAdministration {
         return article.getArticleNr();
     }
 
+    public int addMassArticle(String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
+        MassArticle massArticle = new MassArticle(name, articleNrGen(), price, stock, available, packageSize);
+        if (inventory.contains(massArticle)) {
+            throw new ArticleAlreadyExistsException(massArticle, "");
+        }
+        inventory.add(massArticle);
+        return massArticle.getArticleNr();
+    }
+
     public void addArticle(Article article) throws ArticleAlreadyExistsException {
         if (inventory.contains(article)) {
             throw new ArticleAlreadyExistsException(article, "");
         }
-        Article newArticle = article;
-        inventory.add(newArticle);
+        inventory.add(article);
     }
-    
+
+    public void addMassArticleToInventory(MassArticle massArticle) throws ArticleAlreadyExistsException {
+        if (inventory.contains(massArticle)) {
+            throw new ArticleAlreadyExistsException(massArticle, "");
+        }
+        inventory.add(massArticle);
+    }
+
     public void delete(int articleNr) {
         int position = getPosOfArticleViaArticleNr(articleNr);
         if (position >= 0) { inventory.remove(position); }
@@ -42,10 +52,16 @@ public class ArticleAdministration {
     public void changeArticleData(Article article, String name, double price, int stock, boolean available) {
         if (!name.equals("")) { article.setName(name); }
         if (price > 0)        { article.setPrice(price); }
-        if (stock >= 0)      { article.setStock(stock); }
+        if (stock >= 0)       { article.setStock(stock); }
         article.setAvailable(available);
     }
 
+    /**
+     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, fals vorhanen, zurück
+     * andernfall wird -1 zurückgegeben
+     * @param articleNr
+     * @return
+     */
     private int getPosOfArticleViaArticleNr(int articleNr) {
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.get(i).getArticleNr() == articleNr) { return i; }
@@ -53,6 +69,11 @@ public class ArticleAdministration {
         return -1;
     }
 
+    /**
+     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, fals vorhanen, zurück
+     * andernfall wird -1 zurückgegeben
+     * @return
+     */
     private int getPosOfArticleViaName(String name) {
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.get(i).getName().equals(name)) { return i; }
@@ -60,12 +81,16 @@ public class ArticleAdministration {
         return -1;
     }
 
-    public void save() {} // TODO Aufgabe 2
-
     //Inventory - get all
-    public List<Article> getAllArticles() { return new ArrayList<Article>(inventory); }
+    /**
+     * Gibt das Inventar unsortiert zurück
+     */
+    public List<Article> getAllArticles() { return new ArrayList<>(inventory); }
 
     //Inventory - get all sorted
+    /**
+     * Gibt das Inventar nach Artikelnummer sortiert zurück
+     */
     public List<Article> getInventorySortedByArticleNr() {
         List<Article> sorted = inventory;
         int j;
@@ -82,6 +107,9 @@ public class ArticleAdministration {
         return sorted;
     }
 
+    /**
+     * Gibt das Inventar nach Preis sortiert zurück
+     */
     public List<Article> getInventorySortedByPrice() {
         List<Article> sorted = inventory;
         int j;
@@ -98,6 +126,9 @@ public class ArticleAdministration {
         return sorted;
     }
 
+    /**
+     * Gibt das Inventar nach Lagerbestand sortiert zurück
+     */
     public List<Article> getInventorySortedByStock() {
         List<Article> sorted = inventory;
         int j;
@@ -115,6 +146,9 @@ public class ArticleAdministration {
     }
 
     //Inventory - get available
+    /**
+     * Gibt alle verfügbaren Artikel des Inputs zurück
+     */
     private List<Article> getOnlyAvailable(List<Article> list) {
         List<Article> onlyAvailable = new ArrayList<>();
         for (Article article : list) {
@@ -125,17 +159,33 @@ public class ArticleAdministration {
         return onlyAvailable;
     }
 
+    /**
+     * Gibt alle verfügbaren Artikel des Inventars zurück
+     * Ruft getOnlyAvailable() auf
+     */
     public List<Article> getAllAvailableArticles() { return getOnlyAvailable(inventory); }
 
     //Inventory - get available sorted
+    /**
+     * Gibt alle verfügbaren Artikel des Inventars nach Artikelnummer sortiert zurück
+     * Ruft getOnlyAvailable() und getInventorySortedByArticleNr() auf
+     */
     public List<Article> getAllAvailableArticlesSortedByArticleNr() {
         return getOnlyAvailable(getInventorySortedByArticleNr());
     }
 
+    /**
+     * Gibt alle verfügbaren Artikel des Inventars nach Preis sortiert zurück
+     * Ruft getOnlyAvailable() und getInventorySortedByStock() auf
+     */
     public List<Article> getAllAvailableArticlesSortedByPrice() {
-        return getOnlyAvailable(getInventorySortedByPrice());
+        return getOnlyAvailable(getInventorySortedByStock());
     }
 
+    /**
+     * Gibt alle verfügbaren Artikel des Inventars nach Lagerbestand sortiert zurück
+     * Ruft getOnlyAvailable() und getInventorySortedByStock() auf
+     */
     public List<Article> getAllAvailableArticlesSortedByStock() {
         return getOnlyAvailable(getInventorySortedByStock());
     }
@@ -145,6 +195,9 @@ public class ArticleAdministration {
         return (int)price + "," + (int)(price*100-(int)price*100) + "€" ;
     }
 
+    /**
+     * Geht alle Artikel durch und gibt die nächste zu verwendende Artikelnummer zurück
+     */
     public int articleNrGen() {
         int articleNr = 100;
         for (Article article : inventory) {
@@ -161,10 +214,15 @@ public class ArticleAdministration {
             if ((article).getName().equals(name))
                 search.add(article);
         }
-        Collections.sort(search, Comparator.comparingInt(Article::getArticleNr));
+        search.sort(Comparator.comparingInt(Article::getArticleNr));
         return search;
     }
 
+    /**
+     * Durchsucht das Inventar und gibt den gewünschten Artikel, fals vorhanen, zurück
+     * @param articleNr
+     * @throws ArticleNotFoundException
+     */
     public Article getArticle(int articleNr) throws ArticleNotFoundException {
         for (Article article : inventory) {
             if ((article).getArticleNr() == articleNr) {
@@ -186,14 +244,53 @@ public class ArticleAdministration {
 
                 }
             }
+
         } while (article != null);
         pm.close();
     }
 
+    public void readMassArticleData(String data) throws IOException {
+        pm.openForReading(data);
+        MassArticle massArticle;
+        do {
+            massArticle = pm.loadMassArticle();
+            if (massArticle != null) {
+                try {
+                    addMassArticleToInventory(massArticle);
+                } catch (ArticleAlreadyExistsException e) {
+
+                }
+            }
+        } while (massArticle != null);
+        pm.close();
+    }
+
+    /**
+     * Gibt jeden Artikel an den FilePersistenceManager zum speichern weiter
+     * @param data
+     * @throws IOException
+     */
     public void saveArticle(String data) throws IOException {
         pm.openForWriting(data);
         for (Article article : inventory) {
-            pm.saveArticle(article);
+            if (!(article instanceof MassArticle)) {
+                pm.saveArticle(article);
+            }
+        }
+        pm.close();
+    }
+
+    /**
+     * Gibt jeden Massenartikel an den FilePersistenceManager zum speichern weiter
+     * @param data
+     * @throws IOException
+     */
+    public void saveMassArticle(String data) throws IOException {
+        pm.openForWriting(data);
+        for (Article massArticle : inventory) {
+            if (massArticle instanceof MassArticle) {
+                pm.saveMassArticle((MassArticle) massArticle);
+            }
         }
         pm.close();
     }
