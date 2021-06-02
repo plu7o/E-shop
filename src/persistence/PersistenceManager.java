@@ -10,9 +10,13 @@ public interface PersistenceManager {
 
     Article loadArticle() throws IOException;
 
-    boolean saveArticle(Article article) throws IOException;
+    MassArticle loadMassArticle() throws IOException;
 
     User loadUser() throws IOException;
+
+    boolean saveArticle(Article article) throws IOException;
+
+    boolean saveMassArticle(MassArticle massArticle) throws IOException;
 
     boolean saveUser(User user) throws IOException;
 
