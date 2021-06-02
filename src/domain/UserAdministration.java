@@ -1,5 +1,4 @@
 package domain;
-import domain.exceptions.ArticleAlreadyExistsException;
 import domain.exceptions.LoginFailedException;
 import domain.exceptions.UserAlreadyExistsException;
 import valueObject.Article;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class UserAdministration {
-
         private List<User> customers =  new Vector<User>();
         private List<User> staff  = new Vector<User>();
         private List<User> users  = new Vector<User>();
