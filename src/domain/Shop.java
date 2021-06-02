@@ -11,8 +11,8 @@ import valueObject.*;
 public class Shop {
     private String file = "";
 
-    private ArticleAdministration articleAdministration;
-    private UserAdministration userAdministration;
+    private final ArticleAdministration articleAdministration;
+    private final UserAdministration userAdministration;
     private final LogAdministration logAdmin;
 
     public Shop(String file) throws IOException {
@@ -20,6 +20,7 @@ public class Shop {
 
         articleAdministration = new ArticleAdministration();
         articleAdministration.readArticleData(file + "_A.txt");
+        articleAdministration.readMassArticleData(file + "_MA.txt");
 
         userAdministration = new UserAdministration();
         userAdministration.readUserData(file + "_U.txt");
@@ -49,6 +50,12 @@ public class Shop {
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
 
+    public void addMassArticle(User loggedInUser, String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
+        int newArticleNr = articleAdministration.addMassArticle(name, price, stock, available, packageSize);
+        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr) };
+        logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
+    }
+
     public void deleteArticle(User loggedInUser, int articleNr) {
         articleAdministration.delete(articleNr);
         String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(articleNr) };
@@ -56,7 +63,7 @@ public class Shop {
     }
 
     public void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available) {
-        List<String> toLog = new ArrayList<String>();
+        List<String> toLog = new ArrayList<>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
         toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(article.getArticleNr()));
@@ -120,7 +127,7 @@ public class Shop {
     }
 
     public void updateUserData(User loggedInUser, User user, String name, String username, String password, String address) {
-        List<String> toLog = new ArrayList<String>();
+        List<String> toLog = new ArrayList<>();
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
         toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(user.getUserNr()));
@@ -152,6 +159,10 @@ public class Shop {
        articleAdministration.saveArticle(file + "_A.txt");
     }
 
+    public void saveMassArticle() throws IOException {
+        articleAdministration.saveMassArticle(file + "_MA.txt");
+    }
+
     public void addToCart(User user, Article article, int amount){
         userAdministration.addToCart(user, article, amount);
     }
@@ -167,7 +178,7 @@ public class Shop {
     public Invoice buy(User user) {
         Invoice invoice = userAdministration.buy(user);
 
-        List<String> toLog = new ArrayList<String>();
+        List<String> toLog = new ArrayList<>();
         toLog.add(String.valueOf(user.getUserNr()));
         toLog.add(user.getUsername());
         toLog.add(invoice.getTotalString());
