@@ -62,7 +62,7 @@ public class FilePersistenceManager implements PersistenceManager {
             return null;
         }
         String articleNrStr = readText();
-        int articelNr = Integer.parseInt(articleNrStr);
+        int articleNr = Integer.parseInt(articleNrStr);
         String priceStr = readText();
         double price = Double.parseDouble(priceStr);
         String stockStr = readText();
@@ -70,12 +70,36 @@ public class FilePersistenceManager implements PersistenceManager {
         String availableStr = readText();
         boolean available = Boolean.parseBoolean(availableStr);
         String stockLogStr = readText();
-        Article article = new Article(name, articelNr, price,  stock, available);
+        Article article = new Article(name, articleNr, price, stock, available);
         if (stockLogStr != null) {
-            List<String> stockLog = new ArrayList<String>(Arrays.asList(stockLogStr.split("#")));
+            List<String> stockLog = new ArrayList<>(Arrays.asList(stockLogStr.split("#")));
             article.setStockLog(stockLog);
         }
         return article;
+    }
+
+    public MassArticle loadMassArticle() throws IOException {
+        String name = readText();
+        if (name == null) {
+            return null;
+        }
+        String articleNrStr = readText();
+        int articleNr = Integer.parseInt(articleNrStr);
+        String priceStr = readText();
+        double price = Double.parseDouble(priceStr);
+        String stockStr = readText();
+        int stock = Integer.parseInt(stockStr);
+        String availableStr = readText();
+        boolean available = Boolean.parseBoolean(availableStr);
+        String packageSizeStr = readText();
+        int packageSize = Integer.parseInt(packageSizeStr);
+        String stockLogStr = readText();
+        MassArticle massArticle = new MassArticle(name, articleNr, price,  stock, available, packageSize);
+        if (stockLogStr != null) {
+            List<String> stockLog = new ArrayList<>(Arrays.asList(stockLogStr.split("#")));
+            massArticle.setStockLog(stockLog);
+        }
+        return massArticle;
     }
 
     public boolean saveArticle(Article article) throws IOException {
@@ -85,6 +109,17 @@ public class FilePersistenceManager implements PersistenceManager {
         writeText(article.getStock() + "");
         writeText(article.isAvailable() + "");
         writeText(String.join("#", article.getStockLog()) + "");
+        return true;
+    }
+
+    public boolean saveMassArticle(MassArticle massArticle) throws IOException {
+        writeText(massArticle.getName());
+        writeText(massArticle.getArticleNr() + "");
+        writeText(massArticle.getPrice() + "");
+        writeText(massArticle.getStock() + "");
+        writeText(massArticle.isAvailable() + "");
+        writeText(massArticle.getPackageSize() + "");
+        writeText(String.join("#", massArticle.getStockLog()) + "");
         return true;
     }
 
