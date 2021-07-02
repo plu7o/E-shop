@@ -16,15 +16,19 @@ public class Invoice {
     private String totalStr;
     private String name;
 
-    public Invoice (User user) {
-        this.userNr = user.getUserNr();
-        this.name = user.getName();
-        this.shoppingCart = user.getShoppingCart().getCart();
+    public Invoice(User user) {
+        this(user.getUserNr(), user.getName(), user.getShoppingCart().getCart());
+    }
+
+    public Invoice(int userNr, String name, Map<Article, Integer> shoppingCart) {
+        this.userNr = userNr;
+        this.name = name;
+        this.shoppingCart = shoppingCart;
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         this.date = format.format(now);
 
-        total=0;
+        total = 0;
         for (Article article : this.shoppingCart.keySet()) {
             total += article.getPrice();
         }
@@ -33,6 +37,7 @@ public class Invoice {
 
     /**
      * Text
+     *
      * @return
      */
     public String toString() {
@@ -55,15 +60,18 @@ public class Invoice {
             articleName = article.getName();
             articleAmount = shoppingCart.get(article);
             spaceAmount = 23 - priceStr.length() - articleName.length() - String.valueOf(articleAmount).length();
-            if (spaceAmount >= 0) { spaces = String.join("", Collections.nCopies(spaceAmount, " ")); }
-            else                  { spaces = ""; }
+            if (spaceAmount >= 0) {
+                spaces = String.join("", Collections.nCopies(spaceAmount, " "));
+            } else {
+                spaces = "";
+            }
             str += "| " + articleName + " x" + articleAmount + spaces + priceStr + " |\n";
             total += price;
         }
 
         this.totalStr = turnToEuro(total);
         str += "+---------------------------+\n";
-        str += "| Summe: " + totalStr + String.join("", Collections.nCopies(18 - totalStr.length(), " ")) + " |\n";
+        str += "| Summe: " + this.totalStr + String.join("", Collections.nCopies(18 - totalStr.length(), " ")) + " |\n";
         str += "+---------------------------+\n";
         str += "\n";
         str += "Danke für Ihren einkauf!\n";
@@ -75,19 +83,49 @@ public class Invoice {
     }
 
     private String turnToEuro(double price) {
-        String str = (int)price + ",";
-        int afterComma = (int)(price*100-(int)price*100);
-        if (afterComma == 0)      { str += "00"; }
-        else if (afterComma < 10) { str += afterComma + "0"; }
-        else                      { str += afterComma; }
+        String str = (int) price + ",";
+        int afterComma = (int) (price * 100 - (int) price * 100);
+        if (afterComma == 0) {
+            str += "00";
+        } else if (afterComma < 10) {
+            str += afterComma + "0";
+        } else {
+            str += afterComma;
+        }
         str += "€";
         return str;
     }
 
     //Getter
-    public float getTotal() { return total; }
+    public float getTotal() {
+        return total;
+    }
 
-    public String getString() { return string; }
+    public String getString() {
+        return string;
+    }
 
-    public String getTotalString() { return totalStr; }
+    public String getTotalString() {
+        return totalStr;
+    }
+
+    public int getUserNr() {
+        return userNr;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public Map<Article, Integer> getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public String getTotalStr() {
+        return totalStr;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

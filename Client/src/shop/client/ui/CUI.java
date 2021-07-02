@@ -5,27 +5,25 @@ import shop.common.exceptions.ArticleNotFoundException;
 import shop.common.exceptions.LoginFailedException;
 import shop.common.exceptions.UserAlreadyExistsException;
 import shop.common.interfaces.ShopInterface;
-import shop.common.valueObject.Article;
-import shop.common.valueObject.Invoice;
-import shop.common.valueObject.User;
-import shop.server.domain.Shop;
+import shop.common.valueObject.*;
+import shop.client.net.ShopFassade;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class CUI implements ShopInterface {
+public class CUI {
 
-    private Shop shop;
+    private ShopFassade shop;
     private BufferedReader in;
     private User logged_in_user;
     private boolean articleAdministration;
     private boolean userAdministration;
 
-    public CUI(String file) throws IOException, UserAlreadyExistsException {
+    public CUI(String host, int port) throws IOException, UserAlreadyExistsException {
         //Shop Verwaltungm wird initialisiert
-        shop = new Shop(file);
+        shop = new ShopFassade(host, port);
 
         in = new BufferedReader(new InputStreamReader(System.in));
     }
@@ -44,8 +42,7 @@ public class CUI implements ShopInterface {
                     """;
 
             System.out.println(menu);
-        }
-        else if (logged_in_user.isCustomer()) {
+        } else if (logged_in_user.isCustomer()) {
             String menu = """
                     +------------------------+
                     | Search             [1] |
@@ -61,8 +58,7 @@ public class CUI implements ShopInterface {
                     """;
 
             System.out.println(menu);
-        }
-        else if (logged_in_user.isStaff()) {
+        } else if (logged_in_user.isStaff()) {
             String menu;
             if (articleAdministration) {
                 menu = """
@@ -81,8 +77,7 @@ public class CUI implements ShopInterface {
                         | Back               [x] |
                         +------------------------+
                         """;
-            }
-            else if (userAdministration) {
+            } else if (userAdministration) {
                 menu = """
                         +------------------------+
                         | User Administration    |
@@ -130,7 +125,7 @@ public class CUI implements ShopInterface {
 
         if (logged_in_user == null) {
             switch (input) {
-                case "1":
+                case "1" -> {
                     System.out.print(prefix() + "Username: ");
                     //username wird eingelesen
                     username = readInput();
@@ -143,8 +138,8 @@ public class CUI implements ShopInterface {
                     } catch (LoginFailedException e) {
                         System.out.println(e.getMessage());
                     }
-                    break;
-                case "2":
+                }
+                case "2" -> {
                     System.out.print(prefix() + "Name: ");
                     name = readInput();
                     System.out.print(prefix() + "Username: ");
@@ -156,19 +151,18 @@ public class CUI implements ShopInterface {
                     } catch (UserAlreadyExistsException e) {
                         System.out.println(e.getMessage());
                     }
-                    break;
-                case "3":
+                }
+                case "3" -> {
                     list = shop.getAllAvailableArticles();
                     showArticleList(list);
-                    break;
-                case "4":
+                }
+                case "4" -> {
                     System.out.print(prefix() + "Article-name > ");
                     articleName = readInput();
                     list = shop.searchArticle(articleName);
                     showArticleList(list);
-                    break;
-                default:
-                    System.out.println("Wrong command see menu!");
+                }
+                default -> System.out.println("Wrong command see menu!");
             }
         } else if (logged_in_user.isCustomer()) {
             switch (input) {
@@ -187,15 +181,15 @@ public class CUI implements ShopInterface {
                         System.out.print(prefix() + "Article-nr > ");
                         String articleNrStr = readInput();
                         articleNr = Integer.parseInt(articleNrStr);
-                        Article article = shop.getArticle(articleNr);
                         System.out.print(prefix() + "Amount > ");
                         String amountStr = readInput();
                         amount = Integer.parseInt(amountStr);
+                        Article article = shop.getArticle(articleNr);
                         shop.addToCart(logged_in_user, article, amount);
                     } catch (ArticleNotFoundException e) {
                         System.out.println(e.getMessage());
-                    } catch(NumberFormatException e2) {
-                         System.out.println("Wrong input!");
+                    } catch (NumberFormatException e2) {
+                        System.out.println("Wrong input!");
                     }
                     break;
                 case "4":
@@ -211,20 +205,21 @@ public class CUI implements ShopInterface {
                         shop.removeFromCart(logged_in_user, article, amount);
                     } catch (ArticleNotFoundException e) {
                         System.out.println(e.getMessage());
-                    } catch(NumberFormatException e2) {
+                    } catch (NumberFormatException e2) {
                         System.out.println("Wrong input!");
                     }
                     break;
                 case "5":
-                    System.out.println(logged_in_user.getShoppingCart() + " | " + Double.toString(logged_in_user.getShoppingCart().getTotal()));
+                    User user = shop.getUser(logged_in_user.getUserNr());
+                    System.out.println(user.getShoppingCart() + " | Total: " + user.getShoppingCart().getTotal());
                     break;
                 case "6":
                     shop.emptyCart(logged_in_user);
                     break;
                 case "7":
+                    logged_in_user = shop.getUser(logged_in_user.getUserNr());
                     Invoice invoice = shop.buy(logged_in_user);
                     System.out.println(invoice);
-                    shop.emptyCart(logged_in_user);
                     break;
                 case "x":
                     System.out.println("successfully logged out");
@@ -265,7 +260,7 @@ public class CUI implements ShopInterface {
                     userNr = Integer.parseInt(userNrStr);
                     list = shop.searchUsers(userNr);
                     showUserList(list);
-                } catch(NumberFormatException e2) {
+                } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
                 }
                 break;
@@ -340,7 +335,6 @@ public class CUI implements ShopInterface {
                     address = readInput();
 
                     shop.updateUserData(logged_in_user, user, name, username, password, address);
-                    System.out.println("User Updated!");
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
                 }
@@ -383,54 +377,45 @@ public class CUI implements ShopInterface {
                     System.out.print(prefix() + "Select Article type [article] | [mass] > ");
                     String type = readInput();
                     switch (type) {
-                        case "article":
+                        case "article" -> {
                             System.out.print(prefix() + "Article-name > ");
                             articleName = readInput();
-
                             System.out.print(prefix() + "Price > ");
                             priceStr = readInput();
                             price = Double.parseDouble(priceStr);
-
                             System.out.print(prefix() + "Stock > ");
                             stockStr = readInput();
                             stock = Integer.parseInt(stockStr);
-
                             System.out.print(prefix() + "Available > ");
                             availableStr = readInput();
                             available = Boolean.parseBoolean(availableStr);
-
                             try {
                                 shop.addArticle(logged_in_user, articleName, price, stock, available);
                             } catch (ArticleAlreadyExistsException e) {
                                 System.out.println(e.getMessage());
                             }
-                            break;
-                        case "mass":
+                        }
+                        case "mass" -> {
                             System.out.print(prefix() + "Article-name > ");
                             articleName = readInput();
-
                             System.out.print(prefix() + "Price > ");
                             priceStr = readInput();
                             price = Double.parseDouble(priceStr);
-
                             System.out.print(prefix() + "Stock > ");
                             stockStr = readInput();
                             stock = Integer.parseInt(stockStr);
-
                             System.out.print(prefix() + "Available > ");
                             availableStr = readInput();
                             available = Boolean.parseBoolean(availableStr);
-
                             System.out.print(prefix() + "Package-Size > ");
                             packageSizeStr = readInput();
                             packageSize = Integer.parseInt(packageSizeStr);
-
                             try {
                                 shop.addMassArticle(logged_in_user, articleName, price, stock, available, packageSize);
                             } catch (ArticleAlreadyExistsException e) {
                                 System.out.println(e.getMessage());
                             }
-                            break;
+                        }
                     }
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
@@ -442,7 +427,6 @@ public class CUI implements ShopInterface {
                     String articleNrStr = readInput();
                     articleNr = Integer.parseInt(articleNrStr);
                     shop.deleteArticle(logged_in_user, articleNr);
-                    System.out.println("Article Deleted!");
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
                 }
@@ -474,7 +458,6 @@ public class CUI implements ShopInterface {
                     available = Boolean.parseBoolean(availableStr);
 
                     shop.updateArticleData(logged_in_user, article, articleName, price, stock, available);
-                    System.out.println("Article Updated!");
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
                 }
@@ -484,30 +467,30 @@ public class CUI implements ShopInterface {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
                     articleNr = Integer.parseInt(articleNrStr);
-                    Article article = shop.getArticle(articleNr);
-                    System.out.println(prefix() + "Amount >  ");
+                    System.out.print(prefix() + "Amount >  ");
                     String amountStr = readInput();
                     int amount = Integer.parseInt(amountStr);
+                    Article article = shop.getArticle(articleNr);
                     shop.addStock(logged_in_user, article, amount);
-                    System.out.println("Stock added!");
                 } catch (NumberFormatException e) {
                     System.out.println("Wrong input!");
                 }
+                break;
             case "7":
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
                     articleNr = Integer.parseInt(articleNrStr);
                     Article article = shop.getArticle(articleNr);
-                    System.out.println(prefix() + "Amount >  ");
+                    System.out.print(prefix() + "Amount >  ");
                     String amountStr = readInput();
                     int amount = Integer.parseInt(amountStr);
                     shop.reduceStock(logged_in_user, article, amount);
-                    System.out.println("Stock reduced!");
                 } catch (NumberFormatException e) {
                     System.out.println("Wrong input!");
                 }
-               case "8":
+                break;
+            case "8":
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -528,8 +511,8 @@ public class CUI implements ShopInterface {
     }
 
     private void showArticleList(List<Article> articleList) {
-        if(articleList.isEmpty()) {
-            System.out.println("List is empty :(");
+        if (articleList.isEmpty()) {
+            System.out.println("No Article Found :(");
         } else {
             for (Article article : articleList) {
                 System.out.println(article);
@@ -538,9 +521,9 @@ public class CUI implements ShopInterface {
         }
     }
 
-    private void showUserList(List<User> users){
-        if(users.isEmpty()) {
-            System.out.println("List is empty :(");
+    private void showUserList(List<User> users) {
+        if (users.isEmpty()) {
+            System.out.println("No User Found :(");
         } else {
             for (User user : users) {
                 System.out.println(user);
@@ -575,11 +558,11 @@ public class CUI implements ShopInterface {
     public void run() {
         String input = "";
         String banner = "███████╗    ███████╗██╗  ██╗ ██████╗ ██████╗ \n" +
-                        "██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗\n" +
-                        "█████╗█████╗███████╗███████║██║   ██║██████╔╝\n" +
-                        "██╔══╝╚════╝╚════██║██╔══██║██║   ██║██╔═══╝ \n" +
-                        "███████╗    ███████║██║  ██║╚██████╔╝██║     \n" +
-                        "╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝       ";
+                "██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗\n" +
+                "█████╗█████╗███████╗███████║██║   ██║██████╔╝\n" +
+                "██╔══╝╚════╝╚════██║██╔══██║██║   ██║██╔═══╝ \n" +
+                "███████╗    ███████║██║  ██║╚██████╔╝██║     \n" +
+                "╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝       ";
         System.out.println(banner);
         System.out.println("WELCOME!");
         do {
@@ -614,9 +597,11 @@ public class CUI implements ShopInterface {
 
     public static void main(String[] args) {
         CUI cui;
+        String host = "localhost";
+        int port = 6789;
         try {
             //cui wird erzeugt
-            cui = new CUI("DATA");
+            cui = new CUI(host, port);
             //Loop
             cui.run();
         } catch (IOException | UserAlreadyExistsException e) {

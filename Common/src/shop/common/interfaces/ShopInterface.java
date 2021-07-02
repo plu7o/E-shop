@@ -275,4 +275,6 @@ public interface ShopInterface {
      * @return Rechnung
      */
     public abstract Invoice buy(User user);
+
+    List<User> getAllUsers();
 }

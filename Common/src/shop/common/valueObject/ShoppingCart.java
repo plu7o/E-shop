@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShoppingCart {
+
     private Map<Article, Integer> cart = new HashMap<>();
 
     public void addToCart(Article article, int amount) {
@@ -46,8 +47,12 @@ public class ShoppingCart {
     public String toString() {
         String str = "";
         for (Article article : cart.keySet()) {
-            str += article  + " | Amount: " + cart.get(article) + "\n";
+            str += article  + " | Amount: " + cart.get(article);
         }
         return str;
+    }
+
+    public void setCart(Map<Article, Integer> cart) {
+        this.cart = cart;
     }
 }

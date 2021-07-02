@@ -1,12 +1,9 @@
 package shop.server.domain;
+
 import java.io.IOException;
 import java.util.*;
 
-import shop.common.*;
-import shop.common.exceptions.ArticleAlreadyExistsException;
-import shop.common.exceptions.ArticleNotFoundException;
-import shop.common.exceptions.LoginFailedException;
-import shop.common.exceptions.UserAlreadyExistsException;
+import shop.common.exceptions.*;
 import shop.common.valueObject.*;
 import shop.common.interfaces.ShopInterface;
 
@@ -29,6 +26,7 @@ public class Shop implements ShopInterface {
 
         logAdmin = new LogAdministration();
     }
+
     @Override
     public void disconnect() throws IOException {
 
@@ -38,7 +36,7 @@ public class Shop implements ShopInterface {
         return articleAdministration.getAllAvailableArticles();
     }
 
-    public List<Article> getAllArticles(){
+    public List<Article> getAllArticles() {
         return articleAdministration.getAllArticles();
     }
 
@@ -52,19 +50,19 @@ public class Shop implements ShopInterface {
 
     public void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.add(name, price, stock, available);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr) };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr)};
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
 
     public void addMassArticle(User loggedInUser, String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.addMassArticle(name, price, stock, available, packageSize);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr) };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr)};
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
 
     public void deleteArticle(User loggedInUser, int articleNr) {
         articleAdministration.delete(articleNr);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(articleNr) };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(articleNr)};
         logAdmin.log(logAdmin.DELETE_ARTICLE, toLog);
     }
 
@@ -73,10 +71,18 @@ public class Shop implements ShopInterface {
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
         toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(article.getArticleNr()));
-        if (article.getName().equals(name) && !name.equals("")) { toLog.add("name: " + name); }
-        if (article.getPrice() != price    && price > 0)        { toLog.add("price: " + price); }
-        if (article.getStock() != stock    && stock >= 0)       { toLog.add("stock: " + stock); }
-        if (article.isAvailable() != available)                 { toLog.add("available: " + available); }
+        if (article.getName().equals(name) && !name.equals("")) {
+            toLog.add("name: " + name);
+        }
+        if (article.getPrice() != price && price > 0) {
+            toLog.add("price: " + price);
+        }
+        if (article.getStock() != stock && stock >= 0) {
+            toLog.add("stock: " + stock);
+        }
+        if (article.isAvailable() != available) {
+            toLog.add("available: " + available);
+        }
         String[] toLogArr = new String[toLog.size()];
         toLog.toArray(toLogArr);
         logAdmin.log(logAdmin.EDIT_ARTICLE, toLogArr);
@@ -84,31 +90,45 @@ public class Shop implements ShopInterface {
     }
 
     public void addStock(User loggedInUser, Article article, int amount) {
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), String.valueOf(amount) };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), String.valueOf(amount)};
         logAdmin.log(logAdmin.ARTICLE_STOCK, toLog);
         article.addStock(amount);
     }
 
     public void reduceStock(User loggedInUser, Article article, int amount) {
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), "-" + amount };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(article.getArticleNr()), "-" + amount};
         logAdmin.log(logAdmin.ARTICLE_STOCK, toLog);
         article.reduceStock(amount);
     }
 
-    public List<User> getCustomers() { return userAdministration.getCustomerList(); }
+    public List<User> getCustomers() {
+        return userAdministration.getCustomerList();
+    }
 
-    public List<User> getStaff() { return userAdministration.getStaff(); }
+    public List<User> getStaff() {
+        return userAdministration.getStaff();
+    }
 
-    public List<User> searchCustomer (int userID) { return userAdministration.searchCustomer(userID); }
+    public List<User> getAllUsers() {
+        return userAdministration.getAllUsers();
+    }
 
-    public List<User> searchUsers(int userID) { return userAdministration.searchUsers(userID); }
+    public List<User> searchCustomer(int userID) {
+        return userAdministration.searchCustomer(userID);
+    }
 
-    public List<User> searchStaff (int userID) { return userAdministration.searchStaff(userID); }
+    public List<User> searchUsers(int userID) {
+        return userAdministration.searchUsers(userID);
+    }
+
+    public List<User> searchStaff(int userID) {
+        return userAdministration.searchStaff(userID);
+    }
 
     public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.userIDGen(), username, password, false, true);
         userAdministration.add(user);
-        String[] toLog = { "", "", String.valueOf(user.getUserNr()), user.getUsername() };
+        String[] toLog = {"", "", String.valueOf(user.getUserNr()), user.getUsername()};
         logAdmin.log(logAdmin.NEW_CUSTOMER, toLog);
         return user;
     }
@@ -116,15 +136,18 @@ public class Shop implements ShopInterface {
     public User addStaff(User loggedInUser, String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.staffIDGen(), username, password, true, false);
         userAdministration.add(user);
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername() };
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername()};
         logAdmin.log(logAdmin.NEW_STAFF, toLog);
         return user;
     }
 
     public void deleteUser(User loggedInUser, User user) {
-        String[] toLog = { String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername() };
-        if (user.isCustomer()) { logAdmin.log(logAdmin.DELETE_CUSTOMER, toLog); }
-        else                   { logAdmin.log(logAdmin.DELETE_STAFF, toLog); }
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(user.getUserNr()), user.getUsername()};
+        if (user.isCustomer()) {
+            logAdmin.log(logAdmin.DELETE_CUSTOMER, toLog);
+        } else {
+            logAdmin.log(logAdmin.DELETE_STAFF, toLog);
+        }
         userAdministration.delete(user);
     }
 
@@ -137,19 +160,30 @@ public class Shop implements ShopInterface {
         toLog.add(String.valueOf(loggedInUser.getUserNr()));
         toLog.add(loggedInUser.getUsername());
         toLog.add(String.valueOf(user.getUserNr()));
-        if (!user.getName().equals(name)         && !name.equals(""))     { toLog.add("name: " + name); }
-        if (!user.getUsername().equals(username) && !username.equals("")) { toLog.add("username: " + username); }
-        if (!user.getPassword().equals(password) && !password.equals("")) { toLog.add("password: ***"); }
-        if (!user.getAddress().equals(address)   && !address.equals(""))  { toLog.add("address: " + address); }
+        if (!user.getName().equals(name) && !name.equals("")) {
+            toLog.add("name: " + name);
+        }
+        if (!user.getUsername().equals(username) && !username.equals("")) {
+            toLog.add("username: " + username);
+        }
+        if (!user.getPassword().equals(password) && !password.equals("")) {
+            toLog.add("password: ***");
+        }
+        if (!user.getAddress().equals(address) && !address.equals("")) {
+            toLog.add("address: " + address);
+        }
         String[] toLogArr = new String[toLog.size()];
         toLog.toArray(toLogArr);
-        if (user.isCustomer()) { logAdmin.log(logAdmin.EDIT_CUSTOMER, toLogArr); }
-        else                   { logAdmin.log(logAdmin.EDIT_STAFF, toLogArr); }
+        if (user.isCustomer()) {
+            logAdmin.log(logAdmin.EDIT_CUSTOMER, toLogArr);
+        } else {
+            logAdmin.log(logAdmin.EDIT_STAFF, toLogArr);
+        }
 
         userAdministration.changeUserData(user, name, username, password, address);
     }
 
-    public User login(String username, String password ) throws LoginFailedException {
+    public User login(String username, String password) throws LoginFailedException {
         return userAdministration.login(username, password);
     }
 
@@ -162,14 +196,14 @@ public class Shop implements ShopInterface {
     }
 
     public void saveArticle() throws IOException {
-       articleAdministration.saveArticle(file + "_A.txt");
+        articleAdministration.saveArticle(file + "_A.txt");
     }
 
     public void saveMassArticle() throws IOException {
         articleAdministration.saveMassArticle(file + "_MA.txt");
     }
 
-    public void addToCart(User user, Article article, int amount){
+    public void addToCart(User user, Article article, int amount) {
         userAdministration.addToCart(user, article, amount);
     }
 
