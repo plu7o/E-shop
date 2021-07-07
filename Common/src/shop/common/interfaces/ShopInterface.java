@@ -92,6 +92,19 @@ public interface ShopInterface {
     public abstract void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available);
 
     /**
+     * Methode um den Massenartikel zu bearbeiten
+     *
+     * @param loggedInUser User der den Artikel bearbeitet
+     * @param article Artikel der geändert werden soll
+     * @param name Name des Artikels
+     * @param price Preis des Artikels
+     * @param stock Bestand des Artikels
+     * @param available Erhältlichkeit des Artikels
+     * @param packageSize Verpackungsgröße des Artikels
+     */
+    public abstract void updateMassArticleData(User loggedInUser, MassArticle article, String name, double price, int stock, boolean available, int packageSize);
+
+    /**
      * Methode, um den Bestand eines Artikels zu erhöhen
      *
      * @param loggedInUser User der den Bestand erhöhen will
