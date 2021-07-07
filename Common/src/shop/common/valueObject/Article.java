@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Article {
     private String name;
-    private int articleNr;
+    private final int articleNr;
     private double price;
     private int stock;
     private boolean available;
@@ -33,9 +33,7 @@ public class Article {
         if (otherArticle instanceof Article) {
             return ((this.articleNr == ((Article) otherArticle).articleNr)
                     && (this.name.equals(((Article) otherArticle).name)));
-        } else {
-            return false;
-        }
+        } else return false;
     }
 
     private void logStock(int amount) {
@@ -44,8 +42,16 @@ public class Article {
     }
 
     //Modifier
+    /**
+     * fügt einem Gegenstand Lagerbestand hinzu
+     * @param amount Anzahl zum hinzufügen
+     */
     public void addStock(int amount)    { this.stock += amount; logStock(amount); }
 
+    /**
+     * entfehrnt Lagerbestand von einem Gegenstand
+     * @param amount Anzahl zum entfehrnen
+     */
     public void reduceStock(int amount) { this.stock -= amount; logStock(-amount); }
 
     //Getter
@@ -63,8 +69,6 @@ public class Article {
 
     //Setter
     public void setName(String name)            { this.name = name; }
-
-    public void setArticleNr(int articleNr)     { this.articleNr = articleNr; }
 
     public void setPrice(double price)          { this.price = price; }
 
