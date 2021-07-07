@@ -28,9 +28,7 @@ public class Shop implements ShopInterface {
     }
 
     @Override
-    public void disconnect() throws IOException {
-
-    }
+    public void disconnect() throws IOException {}
 
     public List<Article> getAllAvailableArticles() {
         return articleAdministration.getAllAvailableArticles();
@@ -50,14 +48,14 @@ public class Shop implements ShopInterface {
 
     public void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.add(name, price, stock, available);
-        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr)};
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr), String.valueOf(stock), String.valueOf(price)};
         logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
     }
 
     public void addMassArticle(User loggedInUser, String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
         int newArticleNr = articleAdministration.addMassArticle(name, price, stock, available, packageSize);
-        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr)};
-        logAdmin.log(logAdmin.NEW_ARTICLE, toLog);
+        String[] toLog = {String.valueOf(loggedInUser.getUserNr()), loggedInUser.getUsername(), String.valueOf(newArticleNr), String.valueOf(stock), String.valueOf(price), String.valueOf(packageSize)};
+        logAdmin.log(logAdmin.NEW_MASS_A, toLog);
     }
 
     public void deleteArticle(User loggedInUser, int articleNr) {
@@ -86,6 +84,32 @@ public class Shop implements ShopInterface {
         String[] toLogArr = new String[toLog.size()];
         toLog.toArray(toLogArr);
         logAdmin.log(logAdmin.EDIT_ARTICLE, toLogArr);
+        articleAdministration.changeArticleData(article, name, price, stock, available);
+    }
+
+    public void updateMassArticleData(User loggedInUser, MassArticle article, String name, double price, int stock, boolean available, int packageSize) {
+        List<String> toLog = new ArrayList<>();
+        toLog.add(String.valueOf(loggedInUser.getUserNr()));
+        toLog.add(loggedInUser.getUsername());
+        toLog.add(String.valueOf(article.getArticleNr()));
+        if (article.getName().equals(name) && !name.equals("")) {
+            toLog.add("name: " + name);
+        }
+        if (article.getPrice() != price && price > 0) {
+            toLog.add("price: " + price);
+        }
+        if (article.getStock() != stock && stock >= 0) {
+            toLog.add("stock: " + stock);
+        }
+        if (article.isAvailable() != available) {
+            toLog.add("available: " + available);
+        }
+        if (article.getPackageSize() != packageSize && packageSize >= 0) {
+            toLog.add("packageSize: " + packageSize);
+        }
+        String[] toLogArr = new String[toLog.size()];
+        toLog.toArray(toLogArr);
+        logAdmin.log(logAdmin.EDIT_MASS_A, toLogArr);
         articleAdministration.changeArticleData(article, name, price, stock, available);
     }
 
