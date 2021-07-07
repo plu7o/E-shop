@@ -347,7 +347,7 @@ public class CUI {
         }
     }
 
-    private void processsArticleAdministartionInput(String input) throws IOException, ArticleNotFoundException {
+    private void processsArticleAdministrationInput(String input) throws IOException, ArticleNotFoundException {
         List<Article> list;
         String articleName;
         String priceStr;
@@ -440,6 +440,7 @@ public class CUI {
                         articleNr = 0;
                     }
                     Article article = shop.getArticle(articleNr);
+                    boolean mass = article instanceof MassArticle;
 
                     System.out.print(prefix() + "Article-name > ");
                     articleName = readInput();
@@ -456,7 +457,15 @@ public class CUI {
                     availableStr = readInput();
                     available = Boolean.parseBoolean(availableStr);
 
-                    shop.updateArticleData(logged_in_user, article, articleName, price, stock, available);
+                    if (mass) {
+                        System.out.print(prefix() + "Package-size > ");
+                        packageSizeStr = readInput();
+                        packageSize = Integer.parseInt(packageSizeStr);
+
+                        shop.updateMassArticleData(logged_in_user, (MassArticle)article, articleName, price, stock, available, packageSize);
+                    } else {
+                        shop.updateArticleData(logged_in_user, article, articleName, price, stock, available);
+                    }
                 } catch (NumberFormatException e2) {
                     System.out.println("Wrong input!");
                 }
@@ -557,11 +566,11 @@ public class CUI {
     public void run() {
         String input = "";
         String banner = "███████╗    ███████╗██╗  ██╗ ██████╗ ██████╗ \n" +
-                        "██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗\n" +
-                        "█████╗█████╗███████╗███████║██║   ██║██████╔╝\n" +
-                        "██╔══╝╚════╝╚════██║██╔══██║██║   ██║██╔═══╝ \n" +
-                        "███████╗    ███████║██║  ██║╚██████╔╝██║     \n" +
-                        "╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝       ";
+                "██╔════╝    ██╔════╝██║  ██║██╔═══██╗██╔══██╗\n" +
+                "█████╗█████╗███████╗███████║██║   ██║██████╔╝\n" +
+                "██╔══╝╚════╝╚════██║██╔══██║██║   ██║██╔═══╝ \n" +
+                "███████╗    ███████║██║  ██║╚██████╔╝██║     \n" +
+                "╚══════╝    ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝       ";
         System.out.println(banner);
         System.out.println("WELCOME!");
         do {
@@ -575,7 +584,7 @@ public class CUI {
                 if (userAdministration) {
                     processUserAdministrationInput(input);
                 } else if (articleAdministration) {
-                    processsArticleAdministartionInput(input);
+                    processsArticleAdministrationInput(input);
                 } else {
                     processUserInput(input);
                 }
@@ -585,9 +594,7 @@ public class CUI {
             //Exit
         } while (!input.equals("q"));
         try {
-            shop.saveUser();
-            shop.saveArticle();
-            shop.saveMassArticle();
+            shop.disconnect();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
