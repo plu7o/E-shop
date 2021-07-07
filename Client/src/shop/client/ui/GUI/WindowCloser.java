@@ -16,5 +16,4 @@ public class WindowCloser extends WindowAdapter {
             System.exit(0);
         }
     }
-
 }
