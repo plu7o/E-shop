@@ -10,7 +10,7 @@ public class User {
     private boolean staff;
     private boolean customer;
 
-    private ShoppingCart shoppingCart; // TODO
+    private ShoppingCart shoppingCart;
 
     public User (String name, int userNr, String username, String password, boolean staff, boolean customer) {
         this(name, userNr, username, password, staff, customer, "");
@@ -28,11 +28,9 @@ public class User {
     }
 
     public boolean equals(Object otherUser) {
-        if(otherUser instanceof User) {
-            return ((this.userNr == ((User) otherUser).userNr)
-                    && (this.name.equals(((User) otherUser).name)));
-        } else
-            return false;
+        if (otherUser instanceof User) {
+            return ((this.userNr == ((User) otherUser).userNr) && (this.name.equals(((User) otherUser).name)));
+        } else return false;
     }
 
     public String toString() {
@@ -57,17 +55,17 @@ public class User {
     public ShoppingCart getShoppingCart() { return shoppingCart; }
 
     //Setter
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username)  { this.username = username; }
 
-    public void setAddress(String address)   {this.address = address;}
+    public void setAddress(String address)    {this.address = address;}
 
-    public void setName(String name)         { this.name = name; }
+    public void setName(String name)          { this.name = name; }
 
-    public void setUserNr(int userNr)        { this.userNr = userNr; }
+    public void setUserNr(int userNr)         { this.userNr = userNr; }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password)  { this.password = password; }
 
-    public void setStaff(boolean staff)      { this.staff = staff; }
+    public void setStaff(boolean staff)       { this.staff = staff; }
 
-    public void setCustomer(boolean staff)   { this.customer = customer; }
+    public void setCustomer(boolean customer) { this.customer = customer; }
 }
