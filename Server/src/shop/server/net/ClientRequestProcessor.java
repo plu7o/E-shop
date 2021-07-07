@@ -35,28 +35,12 @@ public class ClientRequestProcessor implements Runnable {
         } catch (IOException e) {
             try {
                 clientSocket.close();
-            } catch (IOException e2) {
-
-            }
+            } catch (IOException e2) {}
             System.out.println("Exception when providing the stream: " + e);
             return;
         }
 
         System.out.println("Connected to " + clientSocket.getInetAddress() + ":" + clientSocket.getPort());
-    }
-
-    private void disconnect() {
-        try {
-            out.println("BYE!");
-            clientSocket.close();
-
-            System.out.println("Connection to " + clientSocket.getInetAddress()
-                    + ":" + clientSocket.getPort() + " disconnect from Client");
-        } catch (Exception e) {
-            System.out.println("---> ERROR trying to disconnect: ");
-            System.out.println(e.getMessage());
-            out.println("ERROR");
-        }
     }
 
     /**
@@ -77,11 +61,10 @@ public class ClientRequestProcessor implements Runnable {
             try {
                 input = in.readLine();
             } catch (Exception e) {
-                System.out.println("---> ERROR reading Client (Action): " + input);
+                System.out.println("---> ERROR reading Client (Action)");
                 System.out.println(e.getMessage());
-                continue;
+                input = null;
             }
-
             // Eingabe bearbeiten:
             if (input == null) {
                 // input wird von readLine() auf null gesetzt, wenn Client Verbindung abbricht
@@ -97,6 +80,7 @@ public class ClientRequestProcessor implements Runnable {
                     case "addMassArticle" -> addMassArticle();
                     case "deleteArticle" -> deleteArticle();
                     case "updateArticleData" -> updateArticleData();
+                    case "updateMassArticleData" -> updateMassArticleData();
                     case "addStock" -> addStock();
                     case "reduceStock" -> reduceStock();
                     case "getCustomers" -> getCustomers();
@@ -122,8 +106,21 @@ public class ClientRequestProcessor implements Runnable {
                 }
             }
         } while (!(input.equals("q")));
-
         disconnect();
+    }
+
+    private void disconnect() {
+        try {
+            out.println("BYE!");
+            clientSocket.close();
+
+            System.out.println("Connection to " + clientSocket.getInetAddress()
+                    + ":" + clientSocket.getPort() + " disconnect from Client");
+        } catch (Exception e) {
+            System.out.println("---> ERROR trying to disconnect: ");
+            System.out.println(e.getMessage());
+            out.println("ERROR");
+        }
     }
 
     private void listAvailableArticles() {
@@ -199,11 +196,10 @@ public class ClientRequestProcessor implements Runnable {
         List<Article> articles;
         if (name.equals("")) {
             articles = shop.getAllAvailableArticles();
-            sendArticleListToClient(articles);
         } else {
             articles = shop.searchArticle(name);
-            sendArticleListToClient(articles);
         }
+        sendArticleListToClient(articles);
     }
 
     private void getArticle() {
@@ -275,9 +271,10 @@ public class ClientRequestProcessor implements Runnable {
         try {
             loggedInUser = shop.getUser(userID);
             shop.addArticle(loggedInUser, name, price, stock, available);
+            shop.saveArticle();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
-        } catch (ArticleAlreadyExistsException e) {
+        } catch (ArticleAlreadyExistsException | IOException e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -341,9 +338,10 @@ public class ClientRequestProcessor implements Runnable {
         try {
             loggedInUser = shop.getUser(userID);
             shop.addMassArticle(loggedInUser, name, price, stock, available, packageSize);
+            shop.saveMassArticle();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
-        } catch (ArticleAlreadyExistsException e) {
+        } catch (ArticleAlreadyExistsException | IOException e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -373,6 +371,12 @@ public class ClientRequestProcessor implements Runnable {
 
         loggedInUser = shop.getUser(userID);
         shop.deleteArticle(loggedInUser, articleNr);
+        try {
+            shop.saveArticle();
+            shop.saveMassArticle();
+        } catch (IOException e) {
+            e.getMessage();
+        }
         out.println("SUCCESS");
     }
 
@@ -403,7 +407,6 @@ public class ClientRequestProcessor implements Runnable {
             System.out.println("---> ERROR reading Client (Article Name)");
             System.out.println(e.getMessage());
         }
-
         String name = new String(input);
 
         try {
@@ -425,7 +428,7 @@ public class ClientRequestProcessor implements Runnable {
         try {
             input = in.readLine();
         } catch (Exception e) {
-            System.out.println("---> ERROR reading Client (Article Availabilty)");
+            System.out.println("---> ERROR reading Client (Article availability)");
             System.out.println(e.getMessage());
         }
         boolean available = Boolean.parseBoolean(input);
@@ -434,12 +437,84 @@ public class ClientRequestProcessor implements Runnable {
             loggedInUser = shop.getUser(userID);
             Article article = shop.getArticle(articleNr);
             shop.updateArticleData(loggedInUser, article, name, price, stock, available);
+            shop.saveArticle();
             out.println("SUCCESS");
-            out.flush();
-        } catch (ArticleNotFoundException e) {
+        } catch (ArticleNotFoundException | IOException e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
-            out.flush();
+        }
+    }
+
+    public void updateMassArticleData() {
+        String input = null;
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (UserID)");
+            System.out.println(e.getMessage());
+        }
+        String ID = new String(input);
+        int userID = Integer.parseInt(ID);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article ID)");
+            System.out.println(e.getMessage());
+        }
+        String articleID = new String(input);
+        int articleNr = Integer.parseInt(articleID);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article Name)");
+            System.out.println(e.getMessage());
+        }
+        String name = new String(input);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article price)");
+            System.out.println(e.getMessage());
+        }
+        double price = Double.parseDouble(input);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article stock)");
+            System.out.println(e.getMessage());
+        }
+        int stock = Integer.parseInt(input);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article availability)");
+            System.out.println(e.getMessage());
+        }
+        boolean available = Boolean.parseBoolean(input);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (Article packageSize)");
+            System.out.println(e.getMessage());
+        }
+        int packageSize = Integer.parseInt(input);
+
+        try {
+            loggedInUser = shop.getUser(userID);
+            MassArticle article = (MassArticle)shop.getArticle(articleNr);
+            shop.updateMassArticleData(loggedInUser, article, name, price, stock, available, packageSize);
+            shop.saveMassArticle();
+            out.println("SUCCESS");
+        } catch (ArticleNotFoundException | IOException e) {
+            System.out.println(e.getMessage());
+            out.println("ERROR");
         }
     }
 
@@ -477,12 +552,13 @@ public class ClientRequestProcessor implements Runnable {
             loggedInUser = shop.getUser(userID);
             Article article = shop.getArticle(articleNr);
             shop.addStock(loggedInUser, article, amount);
+            shop.saveArticle();
+            shop.saveMassArticle();
             out.println("SUCCESS");
-        } catch (ArticleNotFoundException e) {
+        } catch (ArticleNotFoundException | IOException e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
         }
-        out.flush();
     }
 
     public void reduceStock() {
@@ -519,8 +595,10 @@ public class ClientRequestProcessor implements Runnable {
             loggedInUser = shop.getUser(userID);
             Article article = shop.getArticle(articleNr);
             shop.reduceStock(loggedInUser, article, amount);
+            shop.saveArticle();
+            shop.saveMassArticle();
             out.println("SUCCESS");
-        } catch (ArticleNotFoundException e) {
+        } catch (ArticleNotFoundException | IOException e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
         }
@@ -640,10 +718,11 @@ public class ClientRequestProcessor implements Runnable {
 
         try {
             User user = shop.addCustomer(name, username, password);
+            shop.saveUser();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
             sendUserToClient(user);
-        } catch (UserAlreadyExistsException e) {
+        } catch (UserAlreadyExistsException | IOException e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -693,10 +772,11 @@ public class ClientRequestProcessor implements Runnable {
         try {
             loggedInUser = shop.getUser(ID);
             User user = shop.addStaff(loggedInUser, name, username, password);
+            shop.saveUser();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
             sendUserToClient(user);
-        } catch (UserAlreadyExistsException e) {
+        } catch (UserAlreadyExistsException | IOException e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -727,6 +807,11 @@ public class ClientRequestProcessor implements Runnable {
         loggedInUser = shop.getUser(loggedUserID);
         User user = shop.getUser(ID);
         shop.deleteUser(loggedInUser, user);
+        try {
+            shop.saveUser();
+        } catch (IOException e) {
+            e.getMessage();
+        }
         out.println("SUCCESS");
     }
 
@@ -805,6 +890,7 @@ public class ClientRequestProcessor implements Runnable {
             loggedInUser = shop.getUser(loggedInUserID);
             User user = shop.getUser(userNr);
             shop.updateUserData(loggedInUser, user, name, username, password, address);
+            shop.saveUser();
             out.println("SUCCESS");
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -871,8 +957,9 @@ public class ClientRequestProcessor implements Runnable {
 
         try {
             shop.signup(name, username, password);
+            shop.saveUser();
             out.println("SUCCESS");
-        } catch (UserAlreadyExistsException e) {
+        } catch (UserAlreadyExistsException | IOException e) {
             out.println("ERROR");
             out.println(e.getMessage());
         }
@@ -1030,6 +1117,8 @@ public class ClientRequestProcessor implements Runnable {
             Invoice invoice = shop.buy(loggedInUser);
             sendInvoiceToClient(invoice);
             shop.emptyCart(loggedInUser);
+            shop.saveUser();
+            shop.saveArticle();
             out.println("SUCCESS");
         } catch (Exception e) {
             System.out.println(e.getMessage());
