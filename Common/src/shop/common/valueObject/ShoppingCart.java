@@ -6,6 +6,11 @@ public class ShoppingCart {
 
     private Map<Article, Integer> cart = new HashMap<>();
 
+    /**
+     * Fügt dem Warenkorb einen Artikel "amount"-Oft hinzu
+     * @param article Der hinzuzufügende Artikel
+     * @param amount Die Menge
+     */
     public void addToCart(Article article, int amount) {
         if (!cart.containsKey(article)) {
             cart.put(article, amount);
@@ -15,6 +20,11 @@ public class ShoppingCart {
         }
     }
 
+    /**
+     * Entfehrnt einen Artikel "amount"-Oft aus dem Warenkorb
+     * @param article Der zu entfehrnenede Artikel
+     * @param amount Die Menge
+     */
     public boolean removeFromCart(Article article, int amount) {
         boolean succeeded = false;
         if (!cart.containsKey(article)) {
@@ -34,6 +44,15 @@ public class ShoppingCart {
 
     public void emptyCart() { cart.clear(); }
 
+    public String toString() {
+        String str = "";
+        for (Article article : cart.keySet()) {
+            str += article  + " | Amount: " + cart.get(article);
+        }
+        return str;
+    }
+
+    //Getter
     public Map<Article, Integer> getCart() { return cart; }
 
     public double getTotal() {
@@ -44,14 +63,7 @@ public class ShoppingCart {
         return total;
     }
 
-    public String toString() {
-        String str = "";
-        for (Article article : cart.keySet()) {
-            str += article  + " | Amount: " + cart.get(article);
-        }
-        return str;
-    }
-
+    //Setter
     public void setCart(Map<Article, Integer> cart) {
         this.cart = cart;
     }
