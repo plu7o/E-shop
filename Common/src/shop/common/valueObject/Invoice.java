@@ -82,6 +82,11 @@ public class Invoice {
         System.out.println(string);
     }
 
+    /**
+     * Nimmt einen Double und verändert ihn so zu einem String, das er in der deutschen Schreibweise ist
+     * @param price Preis
+     * @return String mit Komma und Eurozeichen
+     */
     private String turnToEuro(double price) {
         String str = (int) price + ",";
         int afterComma = (int) (price * 100 - (int) price * 100);
@@ -97,35 +102,19 @@ public class Invoice {
     }
 
     //Getter
-    public float getTotal() {
-        return total;
-    }
+    public float getTotal()        { return total; }
 
-    public String getString() {
-        return string;
-    }
+    public String getString()      { return string; }
 
-    public String getTotalString() {
-        return totalStr;
-    }
+    public String getTotalString() { return totalStr; }
 
-    public int getUserNr() {
-        return userNr;
-    }
+    public int getUserNr()         { return userNr; }
 
-    public String getDate() {
-        return date;
-    }
+    public String getDate()        { return date; }
 
-    public Map<Article, Integer> getShoppingCart() {
-        return shoppingCart;
-    }
+    public String getTotalStr()    { return totalStr; }
 
-    public String getTotalStr() {
-        return totalStr;
-    }
+    public String getName()        { return name; }
 
-    public String getName() {
-        return name;
-    }
+    public Map<Article, Integer> getShoppingCart() { return shoppingCart; }
 }
