@@ -120,10 +120,10 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 repaint();
             }
             case "invoice" -> {
-
+                //display invoice
             }
             case "cart" -> {
-
+                //dispay cart
             }
         }
     }
@@ -149,12 +149,14 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
 
     @Override
     public void onAddedToCart() {
+        //update User shoppincart
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
 
     @Override
     public void onRemovedFromCart() {
+        //update User shoppincart
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
@@ -167,7 +169,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
 
     @Override
     public void onBuy(Invoice invoice) {
-
+        //update User shoppincart
         setPanel("invoice");
     }
 
