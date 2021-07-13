@@ -49,7 +49,7 @@ public class MassArticleTableModel extends AbstractTableModel {
                 return selectedArticle.getName();
             }
             case 2 -> {
-                return selectedArticle.getPrice();
+                return selectedArticle.getPriceStr();
             }
             case 3 -> {
                 return selectedArticle.getStock();
