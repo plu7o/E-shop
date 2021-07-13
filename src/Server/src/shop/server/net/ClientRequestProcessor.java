@@ -716,11 +716,10 @@ public class ClientRequestProcessor implements Runnable {
 
         try {
             User user = shop.addCustomer(name, username, password);
-            shop.saveUser();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
             sendUserToClient(user);
-        } catch (UserAlreadyExistsException | IOException e) {
+        } catch (UserAlreadyExistsException e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -770,11 +769,10 @@ public class ClientRequestProcessor implements Runnable {
         try {
             loggedInUser = shop.getUser(ID);
             User user = shop.addStaff(loggedInUser, name, username, password);
-            shop.saveUser();
             // Rückmeldung an den Client: Aktion erfolgreich!
             out.println("SUCCESS");
             sendUserToClient(user);
-        } catch (UserAlreadyExistsException | IOException e) {
+        } catch (UserAlreadyExistsException  e) {
             // Rückmeldung an den Client: Fehler!
             out.println("ERROR");
             out.println(e.getMessage());
@@ -805,11 +803,6 @@ public class ClientRequestProcessor implements Runnable {
         loggedInUser = shop.getUser(loggedUserID);
         User user = shop.getUser(ID);
         shop.deleteUser(loggedInUser, user);
-        try {
-            shop.saveUser();
-        } catch (IOException e) {
-            e.getMessage();
-        }
         out.println("SUCCESS");
     }
 
@@ -888,7 +881,6 @@ public class ClientRequestProcessor implements Runnable {
             loggedInUser = shop.getUser(loggedInUserID);
             User user = shop.getUser(userNr);
             shop.updateUserData(loggedInUser, user, name, username, password, address);
-            shop.saveUser();
             out.println("SUCCESS");
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -1113,11 +1105,10 @@ public class ClientRequestProcessor implements Runnable {
         try {
             loggedInUser = shop.getUser(userID);
             Invoice invoice = shop.buy(loggedInUser);
-            sendInvoiceToClient(invoice);
-            shop.emptyCart(loggedInUser);
-            shop.saveUser();
-            shop.saveArticle();
             out.println("SUCCESS");
+            sendInvoiceToClient(invoice);
+            loggedInUser.getShoppingCart().emptyCart();
+            shop.saveArticle();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
