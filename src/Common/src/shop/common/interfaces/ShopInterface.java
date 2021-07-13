@@ -19,14 +19,14 @@ public interface ShopInterface {
      *
      * @return Liste mit allen erhältlichen Artikel im Bestand des Shops.
      */
-    public abstract List<Article> getAllAvailableArticles();
+    List<Article> getAllAvailableArticles();
 
     /**
      * Methode, die eine Liste mit allen Artikel zurückgibt.
      *
      * @return Liste mit allen Artikel im Bestand des Shops.
      */
-    public abstract List<Article> getAllArticles();
+    List<Article> getAllArticles();
 
     /**
      * Methode zum Suchen von Artikel anhand des Namens. Es wird eine Liste von Artikeln
@@ -35,7 +35,7 @@ public interface ShopInterface {
      * @param name Name des gesuchten Artikels
      * @return Liste der gefundenen Artikel (evtl. leer)
      */
-    public abstract List<Article> searchArticle(String name);
+    List<Article> searchArticle(String name);
 
     /**
      * Durchsucht das Inventar und gibt den gewünschten Artikel, falls vorhanen, zurück
@@ -44,7 +44,7 @@ public interface ShopInterface {
      * @return Article, falls vorhanden
      * @throws ArticleNotFoundException
      */
-    public abstract Article getArticle(int articleNr) throws ArticleNotFoundException;
+    Article getArticle(int articleNr) throws ArticleNotFoundException;
 
     /**
      * Methode zum Einfügen eines neuen Artikels in den Bestand.
@@ -57,7 +57,7 @@ public interface ShopInterface {
      * @param available    ob der Artikel auf Bestand ist oder nicht
      * @throws ArticleAlreadyExistsException wenn der Artikel bereits existiert
      */
-    public abstract void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException;
+    void addArticle(User loggedInUser, String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException;
 
     /**
      * Methode zum Einfügen eines neuen Massenartikels in den Bestand.
@@ -71,7 +71,7 @@ public interface ShopInterface {
      * @param packageSize  Größe einer Packung
      * @throws ArticleAlreadyExistsException, wenn der Massenartikel bereits existiert
      */
-    public abstract void addMassArticle(User loggedInUser, String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException;
+    void addMassArticle(User loggedInUser, String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException;
 
     /**
      * Methode zum Löschen eines Artikels aus dem Bestand.
@@ -79,7 +79,7 @@ public interface ShopInterface {
      * @param loggedInUser User der den Artikel löschen will
      * @param articleNr    Nummer des Artikels
      */
-    public abstract void deleteArticle(User loggedInUser, int articleNr);
+    void deleteArticle(User loggedInUser, int articleNr);
 
     /**
      * Methode um den Artikel zu bearbeiten
@@ -91,7 +91,7 @@ public interface ShopInterface {
      * @param stock        Bestand des Artikels
      * @param available    Erhältlichkeit des Artikels
      */
-    public abstract void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available);
+    void updateArticleData(User loggedInUser, Article article, String name, double price, int stock, boolean available);
 
     /**
      * Methode um den Massenartikel zu bearbeiten
@@ -104,7 +104,7 @@ public interface ShopInterface {
      * @param available    Erhältlichkeit des Artikels
      * @param packageSize  Verpackungsgröße des Artikels
      */
-    public abstract void updateMassArticleData(User loggedInUser, MassArticle article, String name, double price, int stock, boolean available, int packageSize);
+    void updateMassArticleData(User loggedInUser, MassArticle article, String name, double price, int stock, boolean available, int packageSize);
 
     /**
      * Methode, um den Bestand eines Artikels zu erhöhen
@@ -113,7 +113,7 @@ public interface ShopInterface {
      * @param article      Artikel dessen bestand erhöht wird
      * @param amount       Anzahl mit der der bestand erhöht werden soll
      */
-    public abstract void addStock(User loggedInUser, Article article, int amount);
+    void addStock(User loggedInUser, Article article, int amount);
 
     /**
      * Methode, um den Bestand eines Artikels zu reduzieren
@@ -122,21 +122,21 @@ public interface ShopInterface {
      * @param article      Artikel dessen bestand reduziert wird
      * @param amount       Anzahl mit der der bestand reduziert wird
      */
-    public abstract void reduceStock(User loggedInUser, Article article, int amount);
+    void reduceStock(User loggedInUser, Article article, int amount);
 
     /**
      * Methode, die eine Liste mit allen Kunden zurückgibt.
      *
      * @return Liste mit allen Kunden im KundenBestand des Shops.
      */
-    public abstract List<User> getCustomers();
+    List<User> getCustomers();
 
     /**
      * Methode, die eine Liste mit allen Mitarbeiter zurückgibt.
      *
      * @return Liste mit allen Mitarbeiter im MitarbeiterBestand des Shops.
      */
-    public abstract List<User> getStaff();
+    List<User> getStaff();
 
     /**
      * Methode zum Suchen von Kunden anhand der UserID. Es wird eine Liste von Kunden
@@ -145,7 +145,7 @@ public interface ShopInterface {
      * @param userID UserID des gesuchten Kunden
      * @return Liste der gefundenen Kunden (evtl. leer)
      */
-    public abstract List<User> searchCustomer(int userID);
+    List<User> searchCustomer(int userID);
 
     /**
      * Methode zum Suchen von User anhand der UserID. Es wird eine Liste von User
@@ -154,7 +154,7 @@ public interface ShopInterface {
      * @param userID UserID des gesuchten User
      * @return Liste der gefundenen User (evtl. leer)
      */
-    public abstract List<User> searchUsers(int userID);
+    List<User> searchUsers(int userID);
 
     /**
      * Methode zum Suchen von Mitarbeiter anhand der UserID. Es wird eine Liste von Mitarbeiter
@@ -163,7 +163,34 @@ public interface ShopInterface {
      * @param userID UserID des gesuchten Mitarbeiter
      * @return Liste der gefundenen Mitarbeiter (evtl. leer)
      */
-    public abstract List<User> searchStaff(int userID);
+    List<User> searchStaff(int userID);
+
+    /**
+     * Methode zum Suchen von Kunden anhand der UserID. Es wird eine Liste von Kunden
+     * zurückgegeben, die alle User mit exakt übereinstimmender UserID enthält.
+     *
+     * @param name Name des gesuchten Kunden
+     * @return Liste der gefundenen Kunden (evtl. leer)
+     */
+    List<User> searchCustomer(String name);
+
+    /**
+     * Methode zum Suchen von User anhand der UserID. Es wird eine Liste von User
+     * zurückgegeben, die alle User mit exakt übereinstimmender UserID enthält.
+     *
+     * @param name Name des gesuchten User
+     * @return Liste der gefundenen User (evtl. leer)
+     */
+    List<User> searchUsers(String name);
+
+    /**
+     * Methode zum Suchen von Mitarbeiter anhand der UserID. Es wird eine Liste von Mitarbeiter
+     * zurückgegeben, die alle User mit exakt übereinstimmender UserID enthält.
+     *
+     * @param name Name des gesuchten Mitarbeiter
+     * @return Liste der gefundenen Mitarbeiter (evtl. leer)
+     */
+    List<User> searchStaff(String name);
 
     /**
      * Methode zum Einfügen eines neuen Kunden.
@@ -175,7 +202,7 @@ public interface ShopInterface {
      * @return User-Objekt, das im Erfolgsfall eingefügt wurde
      * @throws UserAlreadyExistsException, wenn der Kunde bereits existiert
      */
-    public abstract User addCustomer(String name, String username, String password) throws UserAlreadyExistsException;
+    User addCustomer(String name, String username, String password) throws UserAlreadyExistsException;
 
     /**
      * Methode zum Einfügen eines neuen Mitarbeiter.
@@ -188,7 +215,7 @@ public interface ShopInterface {
      * @return User-Objekt, das im Erfolgsfall eingefügt wurde
      * @throws UserAlreadyExistsException, wenn der Mitarbeiter bereits existiert
      */
-    public abstract User addStaff(User loggedInUser, String name, String username, String password) throws UserAlreadyExistsException;
+    User addStaff(User loggedInUser, String name, String username, String password) throws UserAlreadyExistsException;
 
     /**
      * Methode zum Löschen eines Users.
@@ -196,7 +223,7 @@ public interface ShopInterface {
      * @param loggedInUser User der den User löschen will
      * @param user         User Objekt das gelöscht werden soll
      */
-    public abstract void deleteUser(User loggedInUser, User user);
+    void deleteUser(User loggedInUser, User user);
 
     /**
      * Durchsucht die User Liste und gibt den gewünschten User, falls vorhanden, zurück
@@ -204,7 +231,7 @@ public interface ShopInterface {
      * @param userNr
      * @return User, falls vorhanden
      */
-    public abstract User getUser(int userNr);
+    User getUser(int userNr);
 
     /**
      * Methode um den User zu bearbeiten
@@ -216,7 +243,7 @@ public interface ShopInterface {
      * @param password     Passwort des Users
      * @param address      Adresse des Users
      */
-    public abstract void updateUserData(User loggedInUser, User user, String name, String username, String password, String address);
+    void updateUserData(User loggedInUser, User user, String name, String username, String password, String address);
 
     /**
      * Methode, zum einloggen
@@ -227,7 +254,7 @@ public interface ShopInterface {
      * @return User, falls Username und Passwort übereinstimmt
      * @throws LoginFailedException, wenn Username und Passwort nicht übereinstimmen
      */
-    public abstract User login(String username, String password) throws LoginFailedException;
+    User login(String username, String password) throws LoginFailedException;
 
     /**
      * Methode, zum Registrieren von neuen Kunden
@@ -238,28 +265,28 @@ public interface ShopInterface {
      * @param password Passwort des Users
      * @throws UserAlreadyExistsException
      */
-    public abstract void signup(String name, String username, String password) throws UserAlreadyExistsException;
+    void signup(String name, String username, String password) throws UserAlreadyExistsException;
 
     /**
      * Methode zum Speichern des Userbestands in einer Datei.
      *
      * @throws IOException
      */
-    public abstract void saveUser() throws IOException;
+    void saveUser() throws IOException;
 
     /**
      * Methode zum Speichern des Artikelbestands in einer Datei.
      *
      * @throws IOException
      */
-    public abstract void saveArticle() throws IOException;
+    void saveArticle() throws IOException;
 
     /**
      * Methode zum Speichern des Massenartikelbestands in einer Datei.
      *
      * @throws IOException
      */
-    public abstract void saveMassArticle() throws IOException;
+    void saveMassArticle() throws IOException;
 
     /**
      * Methode, um ein Artikel dem Warenkorb eines Kunden hinzufügen
@@ -268,7 +295,7 @@ public interface ShopInterface {
      * @param article Artikel der hinzugefügt wird
      * @param amount  Anzahl der Artikel die hinzugefügt werden
      */
-    public abstract void addToCart(User user, Article article, int amount) throws ShoppingCartException;
+    void addToCart(User user, Article article, int amount) throws ShoppingCartException;
 
     /**
      * Methode, um ein Artikel aus dem Warenkorb eines User zu entfernen
@@ -277,14 +304,14 @@ public interface ShopInterface {
      * @param article Artikel der entfernt wird
      * @param amount  Anzahl der Artikel die entfernt werden
      */
-    public abstract void removeFromCart(User user, Article article, int amount) throws ShoppingCartException;
+    void removeFromCart(User user, Article article, int amount) throws ShoppingCartException;
 
     /**
      * Methode die den Warenkorb eines Kunden Leert
      *
      * @param user User mit Warenkorb
      */
-    public abstract void emptyCart(User user);
+    void emptyCart(User user);
 
     /**
      * Methode, die ein Rechnungs-Objekt mit allen Artikel die sich im Warenkorb befinden erzeugt
@@ -293,10 +320,19 @@ public interface ShopInterface {
      * @param user User der den Kauf getätigt hat
      * @return Rechnung
      */
-    public abstract Invoice buy(User user);
+    Invoice buy(User user);
 
+    /**
+     * gibt eine Liste aller Nutzer zurück
+     * @return Liste aller Nutzer
+     */
     List<User> getAllUsers();
 
-    public List<Article> getSorted(String by, boolean onlyAvailabe);
-
+    /**
+     * Gibt einem das nach "by" sortierte Inventar, oder, bei Bedarf, nur die verfügbaren Artikel
+     * @param by der Parameter, nach dem sortiert werden soll
+     * @param onlyAvailable ob nur Verfügbare Artikel ausgegeben werden sollen
+     * @return sortierte Liste mit den Artikeln
+     */
+    List<Article> getSorted(String by, boolean onlyAvailable);
 }
