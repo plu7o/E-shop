@@ -8,10 +8,7 @@ import shop.server.persistence.FilePersistenceManager;
 import shop.server.persistence.PersistenceManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class ArticleAdministration {
     private List<Article> inventory = new ArrayList<>();
@@ -20,20 +17,22 @@ public class ArticleAdministration {
 
     public int add(String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         Article article = new Article(name, articleNrGen(), price, stock, available);
-        if (inventory.contains(article)) {
+        if (nameInUse(name)) {
             throw new ArticleAlreadyExistsException(article, "");
+        } else {
+            inventory.add(article);
+            return article.getArticleNr();
         }
-        inventory.add(article);
-        return article.getArticleNr();
     }
 
     public int addMassArticle(String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
         MassArticle massArticle = new MassArticle(name, articleNrGen(), price, stock, available, packageSize);
-        if (inventory.contains(massArticle)) {
+        if (nameInUse(name)) {
             throw new ArticleAlreadyExistsException(massArticle, "");
+        } else {
+            inventory.add(massArticle);
+            return massArticle.getArticleNr();
         }
-        inventory.add(massArticle);
-        return massArticle.getArticleNr();
     }
 
     public void addArticle(Article article) throws ArticleAlreadyExistsException {
@@ -63,8 +62,8 @@ public class ArticleAdministration {
     }
 
     /**
-     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, fals vorhanen, zurück
-     * andernfall wird -1 zurückgegeben
+     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, falls vorhanden, zurück
+     * andernfalls wird -1 zurückgegeben
      * @param articleNr
      * @return
      */
@@ -76,8 +75,8 @@ public class ArticleAdministration {
     }
 
     /**
-     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, fals vorhanen, zurück
-     * andernfall wird -1 zurückgegeben
+     * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, falls vorhanden, zurück
+     * andernfalls wird -1 zurückgegeben
      * @return
      */
     private int getPosOfArticleViaName(String name) {
@@ -151,6 +150,12 @@ public class ArticleAdministration {
         return sorted;
     }
 
+    public List<Article> getInventorySortedByName() {
+        List<Article> toSort = inventory;
+        Collections.sort(toSort, Comparator.comparing(shop.common.valueObject.Article::getName));
+        return toSort;
+    }
+
     //Inventory - get available
     /**
      * Gibt alle verfügbaren Artikel des Inputs zurück
@@ -194,6 +199,10 @@ public class ArticleAdministration {
      */
     public List<Article> getAllAvailableArticlesSortedByStock() {
         return getOnlyAvailable(getInventorySortedByStock());
+    }
+
+    public List<Article> getAllAvailableArticlesSortedByName() {
+        return getOnlyAvailable(getInventorySortedByName());
     }
 
     //misc
@@ -299,5 +308,17 @@ public class ArticleAdministration {
             }
         }
         pm.close();
+    }
+
+    /**
+     * Überprüft, ob es einen Artikel mit dem Namen "name" gibt
+     * @param name Der zu überprüfende Name
+     * @return boolean ob vergeben
+     */
+    private boolean nameInUse(String name) {
+        for (Article article : inventory) {
+            if (article.getName().equals(name)) return true;
+        }
+        return false;
     }
 }
