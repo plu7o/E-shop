@@ -1,13 +1,13 @@
 package shop.client.ui.GUI.panel;
 
-import shop.common.interfaces.ShopInterface;
-import shop.common.valueObject.Article;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import shop.common.interfaces.ShopInterface;
+import shop.common.valueObject.Article;
 
 public class SearchArticlePanel extends JPanel {
 

@@ -57,21 +57,21 @@ public class StaffMenuPanel extends JPanel {
 
     private void setup() {
 
-        setLayout(new GridLayout(3, 1, 5, 5));
+        setLayout(new GridLayout(2, 1, 5, 5));
 
-        subPanelArticle.setLayout(new GridLayout(3,1,5,5));
+        subPanelArticle.setLayout(new GridLayout(4,1,5,5));
         subPanelArticle.add(addArticleButton);
         subPanelArticle.add(deleteArticleButton);
         subPanelArticle.add(saveArticleButton);
         subPanelArticle.add(showArticleButton);
         subPanelArticle.setBorder(BorderFactory.createTitledBorder("Article Administration"));
 
-        subPanelUser.setLayout(new GridLayout(3,1,5,5));
+        subPanelUser.setLayout(new GridLayout(4,1,5,5));
         subPanelUser.add(addUserButton);
         subPanelUser.add(deleteUserButton);
         subPanelUser.add(saveUserButton);
         subPanelUser.add(showUserButton);
-        subPanelUser.setBorder(BorderFactory.createTitledBorder("Article Administration"));
+        subPanelUser.setBorder(BorderFactory.createTitledBorder("User Administration"));
 
         add(subPanelArticle, BorderLayout.NORTH);
         add(subPanelUser, BorderLayout.SOUTH);
@@ -143,7 +143,6 @@ public class StaffMenuPanel extends JPanel {
                             stock_string.matches("^[A-Za-zäüöÄÜÖ]$+") ||
                             stock_string.equals("") ||
                             name.equals("") ||
-                            packageSize_string.equals("") ||
                             packageSize_string.matches("^[A-Za-zäüöÄÜÖ]$+"))) {
 
                         double price = Double.parseDouble(price_string);
@@ -157,16 +156,27 @@ public class StaffMenuPanel extends JPanel {
                                 shop.addMassArticle(user, name, price, stock, available, packageSize);
                                 staffMenuListener.onArticleAdded();
                             } catch (ArticleAlreadyExistsException exception) {
-                                exception.getMessage();
+                                JOptionPane.showMessageDialog(getRootPane(),
+                                        "Article Already Exists",
+                                        "Formular",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                        } else {
+                        } else if (availableBox.isSelected()) {
                             try {
                                 User user = shop.getUser(loggedInUser.getUserNr());
                                 shop.addArticle(user, name, price, stock, available);
                                 staffMenuListener.onArticleAdded();
                             } catch (ArticleAlreadyExistsException exception) {
-                                exception.getMessage();
+                                JOptionPane.showMessageDialog(getRootPane(),
+                                        "Article Already Exists",
+                                        "Formular",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
+                        } else {
+                            JOptionPane.showMessageDialog(getRootPane(),
+                                    "Select Article type",
+                                    "Formular",
+                                    JOptionPane.INFORMATION_MESSAGE);
                         }
                     } else {
                         JOptionPane.showMessageDialog(getRootPane(),

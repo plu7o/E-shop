@@ -1,10 +1,12 @@
 package shop.client.ui.GUI.panel;
 
 import shop.common.exceptions.ArticleNotFoundException;
+import shop.common.exceptions.ShoppingCartException;
 import shop.common.interfaces.ShopInterface;
 import shop.common.valueObject.Article;
 import shop.common.valueObject.Invoice;
 import shop.common.valueObject.User;
+import shop.server.domain.Shop;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +32,7 @@ public class CustomerMenuPanel extends JPanel {
         public void onAddedToCart();
         public void onRemovedFromCart();
         public void onShowCart(Map<Article, Integer> shoppingCart);
+        public void onEmptyCart();
         public void onBuy(Invoice invoice);
     }
 
@@ -71,7 +74,7 @@ public class CustomerMenuPanel extends JPanel {
         buyButton.addActionListener(new CartActionListener());
     }
 
-   public class CartActionListener implements ActionListener {
+    public class CartActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Article article = null;
             int articleID;
@@ -99,12 +102,18 @@ public class CustomerMenuPanel extends JPanel {
                                 "Form", JOptionPane.PLAIN_MESSAGE);
                     }
                 } catch(ArrayIndexOutOfBoundsException exception2 ){
-                        JOptionPane.showMessageDialog(getRootPane(),
-                                "No Article Selected",
-                                "ShoppingCart",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    }
+                    JOptionPane.showMessageDialog(getRootPane(),
+                            "No Article Selected",
+                            "ShoppingCart",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
+                catch(ShoppingCartException exception3 ) {
+                    JOptionPane.showMessageDialog(getRootPane(),
+                            "Wrong amount",
+                            "ShoppingCart",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
             else if (e.getSource().equals(removeButton)) {
                 try {
                     try {
@@ -127,11 +136,16 @@ public class CustomerMenuPanel extends JPanel {
                         JOptionPane.showMessageDialog(getRootPane(), "Form is incomplete and/or incorrectly filled out!",
                                 "Form", JOptionPane.PLAIN_MESSAGE);
                     }
-                } catch(ArrayIndexOutOfBoundsException exception2 ){
+                } catch(ArrayIndexOutOfBoundsException exception2){
                     JOptionPane.showMessageDialog(getRootPane(),
                             "No Article Selected",
                             "ShoppingCart",
                             JOptionPane.INFORMATION_MESSAGE);
+                } catch(ShoppingCartException exception3 ) {
+                    JOptionPane.showMessageDialog(getRootPane(),
+                            "Wrong amount",
+                            "ShoppingCart",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
             else if (e.getSource().equals(cartButton)) {
@@ -149,6 +163,7 @@ public class CustomerMenuPanel extends JPanel {
             else if (e.getSource().equals(emptyButton)) {
                 User user = shop.getUser(loggedInUser.getUserNr());
                 shop.emptyCart(user);
+                customerMenuListener.onEmptyCart();
                 JOptionPane.showMessageDialog(getRootPane(),
                         "Shopping Cart was emptied",
                         "Shopping Cart",

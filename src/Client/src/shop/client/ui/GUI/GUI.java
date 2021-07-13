@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArticlePanel.SearchResultListener,
-        CustomerMenuPanel.CustomerMenuListener, StaffMenuPanel.StaffMenuListener {
+        CustomerMenuPanel.CustomerMenuListener, StaffMenuPanel.StaffMenuListener, TotalBarPanel.TotalBarListener, ArticleSortPanel.ArticleSortListener {
 
     public static final int DEFAULT_PORT = 6789;
     private ShopInterface shop;
@@ -35,11 +35,12 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     private CartTablePanel cartTablePanel;
     private JScrollPane cart_ScrollPane;
 
+    private TotalBarPanel totalBarPanel;
+    private ArticleSortPanel articleSortPanel;
     private JPanel welcomePanel;
     private CustomerMenuPanel customerMenuPanel;
     private StaffMenuPanel staffMenuPanel;
 
-    private JLabel total;
 
 
     public GUI(String title, String host, int port) throws IOException {
@@ -64,6 +65,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
         addWindowListener(new WindowCloser());
 
         setupMenu();
+
 
         searchArticlePanel = new SearchArticlePanel(shop, this);
         loginPanel = new LoginPanel(shop, this);
@@ -116,10 +118,27 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
             case "customer" -> {
                 getContentPane().removeAll();
                 add(loginPanel, BorderLayout.WEST);
-                add(article_ScrollPane, BorderLayout.CENTER);
                 add(searchArticlePanel, BorderLayout.NORTH);
                 customerMenuPanel = new CustomerMenuPanel(shop, this, articleTablePanel, loggedInUser);
                 add(customerMenuPanel, BorderLayout.EAST);
+
+                JPanel tablePanel = new JPanel();
+                tablePanel.setLayout(new GridBagLayout());
+                GridBagConstraints c = new GridBagConstraints();
+                articleSortPanel = new ArticleSortPanel(shop, this);
+                c.anchor = GridBagConstraints.FIRST_LINE_START;
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 0;
+                tablePanel.add(articleSortPanel, c);
+                c.fill = GridBagConstraints.BOTH;
+                c.ipady = 40;
+                c.ipadx = 40;//make this component tall
+                c.gridx = 0;
+                c.gridy = 1;
+                tablePanel.add(article_ScrollPane, c);
+                add(tablePanel, BorderLayout.CENTER);
+
                 revalidate();
                 repaint();
             }
@@ -144,8 +163,8 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 getContentPane().removeAll();
                 add(loginPanel, BorderLayout.WEST);
                 add(cart_ScrollPane, BorderLayout.CENTER);
-
-                //display total bar
+                totalBarPanel = new TotalBarPanel(shop, this, loggedInUser);
+                add(totalBarPanel, BorderLayout.SOUTH);
                 revalidate();
                 repaint();
 
@@ -229,9 +248,30 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     }
 
     @Override
+    public void onEmptyCart() {
+        List<Article> currentArticles = shop.getAllArticles();
+        articleTablePanel.updateArticles(currentArticles);
+    }
+
+    @Override
     public void onBuy(Invoice invoice) {
         //update User shoppincart
         setPanel("invoice", null);
+    }
+
+    @Override
+    public void onSortID(List<Article> sortedList) {
+        articleTablePanel.updateArticles(sortedList);
+    }
+
+    @Override
+    public void onSortName(List<Article> sortedList) {
+        articleTablePanel.updateArticles(sortedList);
+    }
+
+    @Override
+    public void onSortPrice(List<Article> sortedList) {
+        articleTablePanel.updateArticles(sortedList);
     }
 
     public static void main(String[] args) {
@@ -248,7 +288,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 try {
                     ia = InetAddress.getLocalHost();
                 } catch (Exception e) {
-                    System.out.println("XXX InetAdress-Fehler: " + e);
+                    System.out.println("XXX InetAddress-Fehler: " + e);
                     System.exit(0);
                 }
                 hostArg = ia.getHostName(); // host ist lokale Maschine
@@ -285,6 +325,25 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     class HelpMenu extends JMenu implements ActionListener {
 
         public HelpMenu() {
+            super("Help");
+
+            JMenu m = new JMenu("About");
+            JMenuItem mi = new JMenuItem("Programmers");
+            mi.addActionListener(this);
+            m.add(mi);
+            mi = new JMenuItem("Stuff");
+            mi.addActionListener(this);
+            m.add(mi);
+            this.add(m);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("something"+ e.getActionCommand());
+        }
+    }
+    class BackMenu extends JMenu implements ActionListener {
+
+        public BackMenu() {
             super("Help");
 
             JMenu m = new JMenu("About");
