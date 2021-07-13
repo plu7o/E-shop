@@ -18,12 +18,14 @@ public class TotalBarPanel extends JPanel {
     public User loggedInUser;
 
     private JLabel totalLabel = new JLabel("Total:");
-    private JLabel priceLabel = new JLabel();
     private JButton buyButton = new JButton("Buy");
+    private JButton backButton = new JButton("Back");
     private JPanel subPanel = new JPanel();
+    private JPanel subPanel2 = new JPanel();
 
     public interface TotalBarListener {
         public void onBuy(Invoice invoice);
+        public void onBack();
     }
 
     public TotalBarPanel(ShopInterface shopInterface, TotalBarListener listener, User user) {
@@ -33,18 +35,21 @@ public class TotalBarPanel extends JPanel {
 
         setup();
         setupEvents();
-
     }
 
     private void setup() {
         setLayout(new BorderLayout());
         subPanel.setLayout(new GridLayout(1,2,5,5));
-        subPanel.add(totalLabel);
 
-        priceLabel.setText(getTotal(loggedInUser));
-        subPanel.add(priceLabel);
-        add(subPanel, BorderLayout.CENTER);
-        add(buyButton, BorderLayout.EAST);
+        totalLabel.setText("Total:" + getTotal(loggedInUser));
+        subPanel2.add(totalLabel);
+
+        subPanel2.setLayout(new GridLayout(1,2,5,5));
+        subPanel2.add(backButton);
+        subPanel2.add(buyButton);
+
+        add(subPanel, BorderLayout.WEST);
+        add(subPanel2, BorderLayout.EAST);
         setBorder(BorderFactory.createBevelBorder(5));
         setVisible(true);
     }
@@ -53,8 +58,10 @@ public class TotalBarPanel extends JPanel {
         User user = shop.getUser(loggedInUser.getUserNr());
         return Double.toString(user.getShoppingCart().getTotal());
     }
+
     private void setupEvents() {
         buyButton.addActionListener(new BarListener());
+        backButton.addActionListener(new BarListener());
     }
 
     public class BarListener implements ActionListener {
@@ -72,9 +79,9 @@ public class TotalBarPanel extends JPanel {
                             "Shopping Cart",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
+            } else if (e.getSource().equals(backButton)) {
+                totalBarListener.onBack();
             }
         }
     }
-
-
 }
