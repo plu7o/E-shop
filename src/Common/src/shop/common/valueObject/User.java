@@ -27,6 +27,11 @@ public class User {
         this.shoppingCart = new ShoppingCart();
     }
 
+    /**
+     * Überprüft, ob dieser Nutzer der gleiche ist, wie der angegebene
+     * @param otherUser der zu vergleichende Nutzer
+     * @return boolean, ob es der gleiche Nutzer ist
+     */
     public boolean equals(Object otherUser) {
         if (otherUser instanceof User) {
             return ((this.userNr == ((User) otherUser).userNr) && (this.name.equals(((User) otherUser).name)));
