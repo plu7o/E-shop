@@ -16,9 +16,7 @@ public class Invoice {
     private String totalStr;
     private String name;
 
-    public Invoice(User user) {
-        this(user.getUserNr(), user.getName(), user.getShoppingCart().getCart());
-    }
+    public Invoice(User user) { this(user.getUserNr(), user.getName(), user.getShoppingCart().getCart()); }
 
     public Invoice(int userNr, String name, Map<Article, Integer> shoppingCart) {
         this.userNr = userNr;
@@ -35,11 +33,6 @@ public class Invoice {
         this.totalStr = turnToEuro(total);
     }
 
-    /**
-     * Text
-     *
-     * @return
-     */
     public String toString() {
         double price = 0;
         String str = "";
@@ -76,10 +69,6 @@ public class Invoice {
         str += "\n";
         str += "Danke für Ihren einkauf!\n";
         return str;
-    }
-
-    public void print() {
-        System.out.println(string);
     }
 
     /**
