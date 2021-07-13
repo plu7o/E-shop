@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArticlePanel.SearchResultListener,
-        CustomerMenuPanel.CustomerMenuListener, StaffMenuPanel.StaffMenuListener, TotalBarPanel.TotalBarListener, ArticleSortPanel.ArticleSortListener {
+        CustomerMenuPanel.CustomerMenuListener, StaffMenuPanel.StaffMenuListener, TotalBarPanel.TotalBarListener, ArticleSortPanel.ArticleSortListener, InvoicePanel.InvoicePanelListener {
 
     public static final int DEFAULT_PORT = 6789;
     private ShopInterface shop;
@@ -40,6 +40,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     private JPanel welcomePanel;
     private CustomerMenuPanel customerMenuPanel;
     private StaffMenuPanel staffMenuPanel;
+    private InvoicePanel invoicePanel;
 
 
 
@@ -126,16 +127,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.PAGE_AXIS));
                 GridBagConstraints c = new GridBagConstraints();
                 articleSortPanel = new ArticleSortPanel(shop, this);
-                c.anchor = GridBagConstraints.FIRST_LINE_START;
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 0;
                 tablePanel.add(articleSortPanel);
-                c.fill = GridBagConstraints.BOTH;
-                c.ipady = 40;
-                c.ipadx = 40;//make this component tall
-                c.gridx = 0;
-                c.gridy = 1;
                 tablePanel.add(article_ScrollPane);
                 add(tablePanel, BorderLayout.CENTER);
 
@@ -148,27 +140,39 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 if (tabelname.equals("User")) {
                     add(user_ScrollPane, BorderLayout.CENTER);
                 } else if (tabelname.equals("Article")) {
+                    JPanel tablePanel = new JPanel();
+                    tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.PAGE_AXIS));
+                    GridBagConstraints c = new GridBagConstraints();
+                    tablePanel.add(articleSortPanel);
+                    tablePanel.add(article_ScrollPane);
+                    add(tablePanel, BorderLayout.CENTER);
                     add(article_ScrollPane, BorderLayout.CENTER);
+                    add(searchArticlePanel, BorderLayout.NORTH);
                 }
-                add(searchArticlePanel, BorderLayout.NORTH);
                 staffMenuPanel = new StaffMenuPanel(shop, this, articleTablePanel, loggedInUser);
                 add(staffMenuPanel, BorderLayout.EAST);
                 revalidate();
                 repaint();
             }
             case "invoice" -> {
-                //display invoice
+                getContentPane().removeAll();
+                add(loginPanel, BorderLayout.WEST);
+                add(invoicePanel, BorderLayout.CENTER);
+                revalidate();
+                repaint();
             }
             case "cart" -> {
                 getContentPane().removeAll();
                 add(loginPanel, BorderLayout.WEST);
-                add(cart_ScrollPane, BorderLayout.CENTER);
+                JPanel tablePanel = new JPanel();
+                tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.PAGE_AXIS));
+                tablePanel.add(cart_ScrollPane);
                 totalBarPanel = new TotalBarPanel(shop, this, loggedInUser);
-                add(totalBarPanel, BorderLayout.SOUTH);
+                tablePanel.add(totalBarPanel, BorderLayout.SOUTH);
+                add(tablePanel, BorderLayout.CENTER);
+
                 revalidate();
                 repaint();
-
-
             }
         }
     }
@@ -256,6 +260,7 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     @Override
     public void onBuy(Invoice invoice) {
         //update User shoppincart
+        invoicePanel = new InvoicePanel(invoice, this);
         setPanel("invoice", null);
     }
 
@@ -275,6 +280,16 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     public void onSortPrice(List<Article> sortedList) {
         List<Article> currentArticles = sortedList;
         articleTablePanel.updateArticles(currentArticles);
+    }
+
+    @Override
+    public void onAccept() {
+        setPanel("customer", null);
+    }
+
+    @Override
+    public void onBack() {
+        setPanel("customer", null);
     }
 
     public static void main(String[] args) {
