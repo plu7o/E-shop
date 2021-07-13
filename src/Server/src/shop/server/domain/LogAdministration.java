@@ -64,11 +64,9 @@ public class LogAdministration {
             case DELETE_CUSTOMER -> text += " | del customer | user " +    data[2] + " deleted by: " + data[1] + " (" + data[0] + ")";
             case ARTICLE_STOCK ->   text += " | mod stock    | stock of article " + data[2] + " changed amount: " + data[3] + " | changed by: " + data[1] + " (" + data[0] + ")";
             case TRANSACTION -> {
-                text += " | purchase     | user " + data[1] + " (" + data[0] + ") bought " + (((data.length - 3) / 2) + 1) + " articles for " + data[2] + " [";
-                for (int i = 3; i < data.length; i++) {
-                    if (i > 3) {
-                        text += ", ";
-                    }
+                text += " | purchase     | user " + data[1] + " (" + data[0] + ") bought " + data[3] + " articles for " + data[2] + " [";
+                for (int i = 4; i < data.length; i++) {
+                    if (i > 4) { text += ", "; }
                     text += data[i];
                 }
                 text += "]";
@@ -91,9 +89,7 @@ public class LogAdministration {
      */
     private String extendStringByAddingArray (String text, String[] data) {
         for (int i = 3; i < data.length; i++) {
-            if (i > 3) {
-                text += ", ";
-            }
+            if (i > 3) { text += ", "; }
             text += data[i];
         }
         text += "]";
