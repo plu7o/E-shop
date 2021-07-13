@@ -35,47 +35,47 @@ public class MiniShopServer {
         }
     }
 
-        /**
-         * Methode zur Entgegennahme von Verbindungswünschen durch Clients.
-         * Die Methode fragt wiederholt ab, ob Verbindungsanfragen vorliegen
-         * und erzeugt dann jeweils ein ClientRequestProcessor-Objekt mit dem
-         * für diese Verbindung erzeugten Client-Socket.
-         */
-        public void acceptClientConnectRequests() {
+    /**
+     * Methode zur Entgegennahme von Verbindungswünschen durch Clients.
+     * Die Methode fragt wiederholt ab, ob Verbindungsanfragen vorliegen
+     * und erzeugt dann jeweils ein ClientRequestProcessor-Objekt mit dem
+     * für diese Verbindung erzeugten Client-Socket.
+     */
+    public void acceptClientConnectRequests() {
 
-            try {
-                while (true) {
-                    Socket clientSocket = serverSocket.accept();
-                    ClientRequestProcessor c = new ClientRequestProcessor(clientSocket, shop);
-                    Thread t = new Thread(c);
-                    t.start();
-                }
-            } catch (IOException e) {
-                fail(e, "Error while listening for connections");
+        try {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                ClientRequestProcessor c = new ClientRequestProcessor(clientSocket, shop);
+                Thread t = new Thread(c);
+                t.start();
             }
-        }
-
-        // Standard-Exit im Fehlerfall:
-        private static void fail(Exception e, String msg) {
-            System.err.println(msg + ": " + e);
-            System.exit(1);
-        }
-
-        public static void main(String[] args) {
-            int port = 0;
-            if (args.length == 1) {
-                try {
-                    port = Integer.parseInt(args[0]);
-                } catch (NumberFormatException e) {
-                    port = 0;
-                }
-            }
-            try {
-                MiniShopServer server = new MiniShopServer(port);
-                server.acceptClientConnectRequests();
-            } catch (IOException e) {
-                e.printStackTrace();
-                fail(e, " - MiniShopServer generation");
-            }
+        } catch (IOException e) {
+            fail(e, "Error while listening for connections");
         }
     }
+
+    // Standard-Exit im Fehlerfall:
+    private static void fail(Exception e, String msg) {
+        System.err.println(msg + ": " + e);
+        System.exit(1);
+    }
+
+    public static void main(String[] args) {
+        int port = 0;
+        if (args.length == 1) {
+            try {
+                port = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                port = 0;
+            }
+        }
+        try {
+            MiniShopServer server = new MiniShopServer(port);
+            server.acceptClientConnectRequests();
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail(e, " - MiniShopServer generation");
+        }
+    }
+}
