@@ -45,19 +45,19 @@ public class LogAdministration {
             case NEW_CUSTOMER -> text += " | add customer | ID: " + data[2] + " Name: " + data[3];
             case EDIT_ARTICLE -> {
                 text += " | mod article  | article " +  data[2] + " edited by " + data[1] + " (" + data[0] + ") [";
-                text = editArticle(text, data);
+                text = extendStringByAddingArray(text, data);
             }
             case EDIT_MASS_A -> {
                 text += " | mod mass a   | article " +  data[2] + " edited by " + data[1] + " (" + data[0] + ") [";
-                text = editArticle(text, data);
+                text = extendStringByAddingArray(text, data);
             }
             case EDIT_STAFF -> {
                 text += " | mod article  | staff " +    data[2] + " edited by " + data[1] + " (" + data[0] + ") [";
-                text = editUser(text, data);
+                text = extendStringByAddingArray(text, data);
             }
             case EDIT_CUSTOMER -> {
                 text += " | mod customer | customer " + data[2] + " edited by " + data[1] + " (" + data[0] + ") [";
-                text = editUser(text, data);
+                text = extendStringByAddingArray(text, data);
             }
             case DELETE_ARTICLE ->  text += " | del article  | article " + data[2] + " deleted by: " + data[1] + " (" + data[0] + ")";
             case DELETE_STAFF ->    text += " | del staff    | staff " +   data[2] + " deleted by: " + data[1] + " (" + data[0] + ")";
@@ -83,18 +83,13 @@ public class LogAdministration {
         }
     }
 
-    private String editArticle (String text, String[] data) {
-        for (int i = 3; i < data.length; i++) {
-            if (i > 3) {
-                text += ", ";
-            }
-            text += data[i];
-        }
-        text += "]";
-        return text;
-    }
-
-    private String editUser (String text, String[] data) {
+    /**
+     * Hängt die String aus Data and den String text an
+     * @param text der bereits vorhandene Text
+     * @param data die anzuhängenden Strings
+     * @return der bearbeitete Text
+     */
+    private String extendStringByAddingArray (String text, String[] data) {
         for (int i = 3; i < data.length; i++) {
             if (i > 3) {
                 text += ", ";
