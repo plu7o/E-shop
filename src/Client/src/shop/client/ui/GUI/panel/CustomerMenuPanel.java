@@ -42,7 +42,6 @@ public class CustomerMenuPanel extends JPanel {
         loggedInUser = user;
 
         setup();
-
         setupEvents();
     }
 
