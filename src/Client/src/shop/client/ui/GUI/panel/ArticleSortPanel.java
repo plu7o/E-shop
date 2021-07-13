@@ -2,7 +2,7 @@ package shop.client.ui.GUI.panel;
 
 import shop.common.interfaces.ShopInterface;
 import shop.common.valueObject.Article;
-import shop.server.domain.Shop;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -44,30 +44,29 @@ public class ArticleSortPanel extends JPanel {
 
     public class SortListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource().equals(sortDropDown)) {
-                switch (sortDropDown.getSelectedIndex()) {
-                    case 0 -> {
+            String s = (String) sortDropDown.getSelectedItem();
+                switch (s) {
+                    case "ID" -> {
                         List<Article> articles = shop.getSorted("ID", true);
                         articleSortListener.onSortID(articles);
                         //ID
                     }
-                    case 1 -> {
+                    case "Name" -> {
                         List<Article> articles = shop.getSorted("name", true);
                         articleSortListener.onSortName(articles);
                         //Name
                     }
-                    case 2 -> {
+                    case "Price" -> {
                         List<Article> articles = shop.getSorted("price", true);
                         articleSortListener.onSortPrice(articles);
                         //Pirce
                     }
-                    case 3 -> {
+                    case "Stock" -> {
                         List<Article> articles = shop.getSorted("stock", true);
                         articleSortListener.onSortPrice(articles);
                         //stock
                     }
                 }
-            }
         }
     }
 }

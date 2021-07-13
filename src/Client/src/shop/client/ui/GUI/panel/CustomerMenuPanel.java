@@ -6,7 +6,6 @@ import shop.common.interfaces.ShopInterface;
 import shop.common.valueObject.Article;
 import shop.common.valueObject.Invoice;
 import shop.common.valueObject.User;
-import shop.server.domain.Shop;
 
 import javax.swing.*;
 import java.awt.*;

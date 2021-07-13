@@ -123,20 +123,20 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
                 add(customerMenuPanel, BorderLayout.EAST);
 
                 JPanel tablePanel = new JPanel();
-                tablePanel.setLayout(new GridBagLayout());
+                tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.PAGE_AXIS));
                 GridBagConstraints c = new GridBagConstraints();
                 articleSortPanel = new ArticleSortPanel(shop, this);
                 c.anchor = GridBagConstraints.FIRST_LINE_START;
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 0;
-                tablePanel.add(articleSortPanel, c);
+                tablePanel.add(articleSortPanel);
                 c.fill = GridBagConstraints.BOTH;
                 c.ipady = 40;
                 c.ipadx = 40;//make this component tall
                 c.gridx = 0;
                 c.gridy = 1;
-                tablePanel.add(article_ScrollPane, c);
+                tablePanel.add(article_ScrollPane);
                 add(tablePanel, BorderLayout.CENTER);
 
                 revalidate();
@@ -261,17 +261,20 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
 
     @Override
     public void onSortID(List<Article> sortedList) {
-        articleTablePanel.updateArticles(sortedList);
+        List<Article> currentArticles = sortedList;
+        articleTablePanel.updateArticles(currentArticles);
     }
 
     @Override
     public void onSortName(List<Article> sortedList) {
-        articleTablePanel.updateArticles(sortedList);
+        List<Article> currentArticles = sortedList;
+        articleTablePanel.updateArticles(currentArticles);
     }
 
     @Override
     public void onSortPrice(List<Article> sortedList) {
-        articleTablePanel.updateArticles(sortedList);
+        List<Article> currentArticles = sortedList;
+        articleTablePanel.updateArticles(currentArticles);
     }
 
     public static void main(String[] args) {

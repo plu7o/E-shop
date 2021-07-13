@@ -1,10 +1,7 @@
 package shop.client.ui.CUI;
 
 import shop.client.net.ShopFassade;
-import shop.common.exceptions.ArticleAlreadyExistsException;
-import shop.common.exceptions.ArticleNotFoundException;
-import shop.common.exceptions.LoginFailedException;
-import shop.common.exceptions.UserAlreadyExistsException;
+import shop.common.exceptions.*;
 import shop.common.valueObject.Article;
 import shop.common.valueObject.Invoice;
 import shop.common.valueObject.MassArticle;
@@ -192,6 +189,8 @@ public class CUI {
                         System.out.println(e.getMessage());
                     } catch (NumberFormatException e2) {
                         System.out.println("Wrong input!");
+                    } catch (ShoppingCartException e) {
+                        e.printStackTrace();
                     }
                     break;
                 case "4":
@@ -209,6 +208,8 @@ public class CUI {
                         System.out.println(e.getMessage());
                     } catch (NumberFormatException e2) {
                         System.out.println("Wrong input!");
+                    } catch (ShoppingCartException e) {
+                        e.printStackTrace();
                     }
                     break;
                 case "5":
