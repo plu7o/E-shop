@@ -15,21 +15,41 @@ public class FilePersistenceManager implements PersistenceManager {
     private BufferedReader reader = null;
     private PrintWriter writer = null;
 
+    /**
+     * Öffnet "file" um aus ihr zu Lesen
+     * @param file die zu öffnende Datei
+     * @throws FileNotFoundException
+     */
     public void openForReading(String file) throws FileNotFoundException {
         reader = new BufferedReader(new FileReader(file));
     }
 
+    /**
+     * Öffnet "file" um sie zu überschreiben
+     * @param file die zu öffnende Datei
+     * @throws FileNotFoundException
+     */
     public void openForWriting(String file) throws IOException {
         writer = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
     }
 
+    /**
+     * Öffnet "file" um an sie anzuhängen
+     * @param file die zu öffnende Datei
+     * @throws FileNotFoundException
+     */
     public void openForAppending(String file) throws IOException {
         writer = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
     }
 
+    /**
+     * schließt alle Reader und Writer
+     * @return ob das Schließen des Readers geklappt hat
+     */
     public boolean close() {
-        if (writer != null)
+        if (writer != null) {
             writer.close();
+        }
         if (reader != null) {
             try {
                 reader.close();
@@ -42,6 +62,11 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Ließt die nächste Zeile und gibt sie zurück
+     * @return Inhalt der nächsten Zeile
+     * @throws IOException
+     */
     private String readText() throws IOException{
         if (reader != null) {
             return reader.readLine();
@@ -50,12 +75,21 @@ public class FilePersistenceManager implements PersistenceManager {
         }
     }
 
+    /**
+     * schreibt "data" in die Datei
+     * @param data was geschrieben werden soll
+     */
     private void writeText(String data) {
         if (writer != null) {
             writer.println(data);
         }
     }
 
+    /**
+     * ließt die nächsten Zeilen, formt sie in einen Artikel und gibt diesen zurück
+     * @return der ausgelesene Artikel
+     * @throws IOException
+     */
     public Article loadArticle() throws IOException {
         String name = readText();
         if (name == null) {
@@ -78,6 +112,11 @@ public class FilePersistenceManager implements PersistenceManager {
         return article;
     }
 
+    /**
+     * ließt die nächsten Zeilen, formt sie in einen Massenartikel und gibt diesen zurück
+     * @return der ausgelesene Massenartikel
+     * @throws IOException
+     */
     public MassArticle loadMassArticle() throws IOException {
         String name = readText();
         if (name == null) {
@@ -102,6 +141,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return massArticle;
     }
 
+    /**
+     * speichert den Inhalt des Artikels in der Datei
+     * @param article der zu speichernde Artikel
+     * @return ob es geklappt hat
+     * @throws IOException
+     */
     public boolean saveArticle(Article article) throws IOException {
         writeText(article.getName());
         writeText(article.getArticleNr() + "");
@@ -112,6 +157,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * speichert den Inhalt des Massenartikel in der Datei
+     * @param massArticle der zu speichernde Massenartikel
+     * @return ob es geklappt hat
+     * @throws IOException
+     */
     public boolean saveMassArticle(MassArticle massArticle) throws IOException {
         writeText(massArticle.getName());
         writeText(massArticle.getArticleNr() + "");
@@ -123,6 +174,11 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * ließt die nächsten Zeilen, formt sie zu einen User und gibt diesen zurück
+     * @return der ausgelesene User
+     * @throws IOException
+     */
     public User loadUser() throws IOException {
         String name = readText();
         if (name == null) {
@@ -141,6 +197,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return new User(name, userNr, username, password, staff, customer, address);
     }
 
+    /**
+     * speichert den Inhalt des Nutzers in der Datei
+     * @param user der zu speichernde Nutzer
+     * @return ob es geklappt hat
+     * @throws IOException
+     */
     public boolean saveUser(User user) throws IOException {
         writeText(user.getName() + "");
         writeText(user.getUserNr() + "");
@@ -152,6 +214,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Schreibt "log" in die Datei
+     * @param log einzuspeichernde Daten
+     * @return ob es geklappt hat
+     * @throws IOException
+     */
     public boolean saveLog(String log) throws IOException {
         writeText(log + "");
         return true;
