@@ -9,7 +9,7 @@ import java.util.Map;
 public class Invoice {
 
     private int userNr;
-    private float total = 0;
+    private float total;
     private String date;
     private Map<Article, Integer> shoppingCart = new HashMap<Article, Integer>();
     private String string;
@@ -28,7 +28,7 @@ public class Invoice {
 
         total = 0;
         for (Article article : this.shoppingCart.keySet()) {
-            total += article.getPrice();
+            total += article.getPrice() * shoppingCart.get(article);
         }
         this.totalStr = turnToEuro(total);
     }
