@@ -8,7 +8,7 @@ import shop.common.valueObject.*;
 import shop.common.interfaces.ShopInterface;
 
 public class Shop implements ShopInterface {
-    private String file = "";
+    private String file;
 
     private final ArticleAdministration articleAdministration;
     private final UserAdministration userAdministration;
@@ -227,16 +227,44 @@ public class Shop implements ShopInterface {
         articleAdministration.saveMassArticle(file + "_MA.txt");
     }
 
-    public void addToCart(User user, Article article, int amount) {
+    public void addToCart(User user, Article article, int amount) throws ShoppingCartException{
         userAdministration.addToCart(user, article, amount);
     }
 
-    public void removeFromCart(User user, Article article, int amount) {
+    public void removeFromCart(User user, Article article, int amount) throws ShoppingCartException{
         userAdministration.removeFromCart(user, article, amount);
     }
 
     public void emptyCart(User user) {
         userAdministration.emptyCart(user);
+    }
+
+    /**
+     * Gibt einem das nach "by" sortierte Inventar, oder, bei Bedarf, nur die verfügbaren Artikel
+     * @param by der Parameter, nach dem sortiert werden soll
+     * @param onlyAvailable ob nur Verfügbare Artikel ausgegeben werden sollen
+     * @return sortierte Liste mit den Artikeln
+     */
+    public List<Article> getSorted(String by, boolean onlyAvailable) {
+        switch (by) {
+            case "ID" -> {
+                if (!onlyAvailable) { return articleAdministration.getInventorySortedByArticleNr(); }
+                else { return articleAdministration.getAllAvailableArticlesSortedByArticleNr(); }
+            }
+            case "price" -> {
+                if (!onlyAvailable) { return articleAdministration.getInventorySortedByPrice(); }
+                else { return articleAdministration.getAllAvailableArticlesSortedByPrice(); }
+            }
+            case "name" -> {
+                if (!onlyAvailable) { return articleAdministration.getInventorySortedByName(); }
+                else { return articleAdministration.getAllAvailableArticlesSortedByName(); }
+            }
+            case "stock" -> {
+                if (!onlyAvailable) { return articleAdministration.getInventorySortedByStock(); }
+                else { return articleAdministration.getAllAvailableArticlesSortedByStock(); }
+            }
+        }
+        return null;
     }
 
     public Invoice buy(User user) {
