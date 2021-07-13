@@ -31,6 +31,11 @@ public class Article {
         return ("Nr: " + articleNr + " | Article-name: " + name + " | Price: " + price + "€" + " | Availability: " + availability  );
     }
 
+    /**
+     * Überprüft, ob dieser Artikel der gleiche ist, wie der angegebene
+     * @param otherArticle der zu vergleichende Artikel
+     * @return boolean, ob es der gleiche Artikel ist
+     */
     public boolean equals(Object otherArticle) {
         if (otherArticle instanceof Article) {
             return ((this.articleNr == ((Article) otherArticle).articleNr)
@@ -38,11 +43,18 @@ public class Article {
         } else return false;
     }
 
+    /**
+     * speichert eine Lagerstandsveränderung im Log
+     * @param amount größe der Lagerstandsveränderung
+     */
     private void logStock(int amount) {
         LocalDateTime now = LocalDateTime.now();
         stockLog.add(format.format(now) + " | amount: " + amount + " ");
     }
 
+    /**
+     * Ändert den String priceStr so, das er den aktuellen Preis in deutscher Schreibweise und mit €-Zeichen darstellt
+     */
     private void updatePriceStr() {
         priceStr = (int)price + ",";
         int afterComma = (int)(price * 100 - (int) price * 100);
