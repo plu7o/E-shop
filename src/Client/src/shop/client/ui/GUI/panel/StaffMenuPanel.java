@@ -21,7 +21,6 @@ public class StaffMenuPanel extends JPanel {
     private ArticleTablePanel articleTablePanel;
     public User loggedInUser;
 
-
     private JButton addArticleButton = new JButton("Add Article");
     private JButton deleteArticleButton = new JButton("Delete Article");
     private JButton saveArticleButton = new JButton("Save Article");
@@ -51,12 +50,10 @@ public class StaffMenuPanel extends JPanel {
         loggedInUser = user;
 
         setup();
-
         setupEvents();
     }
 
     private void setup() {
-
         setLayout(new GridLayout(2, 1, 5, 5));
 
         subPanelArticle.setLayout(new GridLayout(4,1,5,5));
@@ -89,7 +86,6 @@ public class StaffMenuPanel extends JPanel {
         deleteUserButton.addActionListener(new UserListener());
         saveUserButton.addActionListener(new UserListener());
         showUserButton.addActionListener(new UserListener());
-
     }
 
     public class ArticleListener implements ActionListener {
