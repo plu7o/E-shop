@@ -33,7 +33,7 @@ public class LogAdministration {
      * Methode, um jede speicherwürdige Aktion in die LOG-Datei einzutragen
      *
      * @param type Art der ausgeführten Aktion
-     * @param data Deteils der ausgeführten Aktion
+     * @param data Details der ausgeführten Aktion
      */
     public void log(int type, String[] data) {
         LocalDateTime now = LocalDateTime.now();
@@ -84,7 +84,7 @@ public class LogAdministration {
     }
 
     /**
-     * Hängt die String aus Data and den String text an
+     * Hängt die Strings aus data and den String text an
      * @param text der bereits vorhandene Text
      * @param data die anzuhängenden Strings
      * @return der bearbeitete Text
