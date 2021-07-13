@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-
 /**
  * Klasse mit Fassade des Shop's auf Client-Seite.
  * Die Klasse stellt die von der GUI/CUI erwarteten Methoden zur Verfügung
@@ -29,7 +28,6 @@ public class ShopFassade implements ShopInterface {
     private Socket socket = null;
     private BufferedReader sin;
     private PrintStream sout;
-
 
     /**
      * Konstruktor, der die Verbindung zum Server aufbaut (Socket) und dieser
@@ -529,6 +527,11 @@ public class ShopFassade implements ShopInterface {
         return staff;
     }
 
+    /**
+     * Methode, die eine Liste mit allen Nutzern zurückgibt.
+     *
+     * @return Liste mit allen Nutzern
+     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
 
@@ -581,6 +584,35 @@ public class ShopFassade implements ShopInterface {
     }
 
     /**
+     * Methode zum Suchen von Kunden anhand der UserID. Es wird eine Liste von Kunden
+     * zurückgegeben, die alle User mit exakt übereinstimmende Namen enthält.
+     *
+     * @param name Name des gesuchten Kunden
+     * @return Liste der gefundenen Kunden (evtl. leer)
+     */
+    public List<User> searchCustomer(String name) {
+        List<User> customers = new ArrayList<>();
+
+        // Server Command für gewählte Aktion
+        sout.println("searchCustomer");
+        sout.println(name);
+        // Antwort vom Server lesen
+        String reply = "?";
+        try {
+            reply = sin.readLine();
+            int customersSize = Integer.parseInt(reply);
+            for (int i = 0; i < customersSize; i++) {
+                User customer = readUserFromServer();
+                customers.add(customer);
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return customers;
+    }
+
+    /**
      * Methode zum Suchen von User anhand der UserID. Es wird eine Liste von User
      * zurückgegeben, die alle User mit exakt übereinstimmender UserID enthält.
      *
@@ -611,6 +643,36 @@ public class ShopFassade implements ShopInterface {
     }
 
     /**
+     * Methode zum Suchen von User anhand der UserID. Es wird eine Liste von User
+     * zurückgegeben, die alle User mit exakt übereinstimmendem Namen enthält.
+     *
+     * @param name Name des gesuchten User
+     * @return Liste der gefundenen User (evtl. leer)
+     */
+    public List<User> searchUsers(String name) {
+        List<User> users = new ArrayList<>();
+
+        // Server Command für gewählte Aktion
+        sout.println("searchUsers");
+        sout.println(name);
+
+        // Antwort vom Server lesen
+        String reply = "?";
+        try {
+            reply = sin.readLine();
+            int usersSize = Integer.parseInt(reply);
+            for (int i = 0; i < usersSize; i++) {
+                User user = readUserFromServer();
+                users.add(user);
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return users;
+    }
+
+    /**
      * Methode zum Suchen von Mitarbeiter anhand der UserID. Es wird eine Liste von Mitarbeiter
      * zurückgegeben, die alle User mit exakt übereinstimmender UserID enthält.
      *
@@ -623,6 +685,35 @@ public class ShopFassade implements ShopInterface {
         // Server Command für gewählte Aktion
         sout.println("searchStaff");
         sout.println(userID);
+        // Antwort vom Server lesen
+        String reply = "?";
+        try {
+            reply = sin.readLine();
+            int staffSize = Integer.parseInt(reply);
+            for (int i = 0; i < staffSize; i++) {
+                User user = readUserFromServer();
+                staff.add(user);
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return staff;
+    }
+
+    /**
+     * Methode zum Suchen von Mitarbeiter anhand der UserID. Es wird eine Liste von Mitarbeiter
+     * zurückgegeben, die alle User mit exakt übereinstimmendem Namen enthält.
+     *
+     * @param name Name des gesuchten Mitarbeiter
+     * @return Liste der gefundenen Mitarbeiter (evtl. leer)
+     */
+    public List<User> searchStaff(String name) {
+        List<User> staff = new ArrayList<>();
+
+        // Server Command für gewählte Aktion
+        sout.println("searchStaff");
+        sout.println(name);
         // Antwort vom Server lesen
         String reply = "?";
         try {
@@ -1006,12 +1097,15 @@ public class ShopFassade implements ShopInterface {
         Invoice invoice = null;
         sout.println("buy");
         sout.println(user.getUserNr());
-
+        String reply = "?";
         try {
-            invoice = readInvoiceFromServer();
+            reply = sin.readLine();
+            if (reply.equals("SUCCESS")) {
+                invoice = readInvoiceFromServer();
+            }
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            return null;
+
         }
         return invoice;
     }
