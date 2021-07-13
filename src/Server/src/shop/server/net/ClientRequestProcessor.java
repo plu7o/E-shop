@@ -1,9 +1,6 @@
 package shop.server.net;
 
-import shop.common.exceptions.ArticleAlreadyExistsException;
-import shop.common.exceptions.ArticleNotFoundException;
-import shop.common.exceptions.LoginFailedException;
-import shop.common.exceptions.UserAlreadyExistsException;
+import shop.common.exceptions.*;
 import shop.common.interfaces.ShopInterface;
 import shop.common.valueObject.*;
 
@@ -103,6 +100,7 @@ public class ClientRequestProcessor implements Runnable {
                     case "removeFromCart" -> removeFromCart();
                     case "emptyCart" -> emptyCart();
                     case "buy" -> buy();
+                    case "getSorted" -> getSorted(); 
                 }
             }
         } while (!(input.equals("q")));
@@ -1030,7 +1028,7 @@ public class ClientRequestProcessor implements Runnable {
             Article article = shop.getArticle(articleNr);
             shop.addToCart(loggedInUser, article, amount);
             out.println("SUCCESS");
-        } catch (ArticleNotFoundException e) {
+        } catch (ArticleNotFoundException | ShoppingCartException e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
         }
@@ -1072,7 +1070,7 @@ public class ClientRequestProcessor implements Runnable {
 
             shop.removeFromCart(loggedInUser, article, amount);
             out.println("SUCCESS");
-        } catch (ArticleNotFoundException e) {
+        } catch (ArticleNotFoundException | ShoppingCartException e) {
             System.out.println(e.getMessage());
             out.println("ERROR");
         }
@@ -1124,5 +1122,29 @@ public class ClientRequestProcessor implements Runnable {
             System.out.println(e.getMessage());
             out.println("ERROR");
         }
+    }
+    
+    public void getSorted() {
+        String input = null;
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (USERID)");
+            System.out.println(e.getMessage());
+        }
+        String by = new String(input);
+
+        try {
+            input = in.readLine();
+        } catch (Exception e) {
+            System.out.println("---> ERROR reading Client (USERID)");
+            System.out.println(e.getMessage());
+        }
+        String onlyAvailable_string = new String(input);
+        boolean onlyAvailable = Boolean.parseBoolean(onlyAvailable_string);
+
+        List<Article> sortedList = shop.getSorted(by, onlyAvailable);
+        sendArticleListToClient(sortedList);
     }
 }
