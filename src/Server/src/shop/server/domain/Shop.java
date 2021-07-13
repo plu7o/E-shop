@@ -247,7 +247,7 @@ public class Shop implements ShopInterface {
 
     public Invoice buy(User user) {
         Invoice invoice = userAdministration.buy(user);
-
+        int amountOfItems = 0;
         List<String> toLog = new ArrayList<>();
         toLog.add(String.valueOf(user.getUserNr()));
         toLog.add(user.getUsername());
@@ -255,7 +255,9 @@ public class Shop implements ShopInterface {
         Map<Article, Integer> shoppingCart = user.getShoppingCart().getCart();
         for (Article article : shoppingCart.keySet()) {
             toLog.add(article.getArticleNr() + ": " + shoppingCart.get(article));
+            amountOfItems += shoppingCart.get(article);
         }
+        toLog.add(String.valueOf(amountOfItems));
         String[] toLogArr = new String[toLog.size()];
         toLog.toArray(toLogArr);
         logAdmin.log(logAdmin.TRANSACTION, toLogArr);
