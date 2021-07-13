@@ -16,7 +16,6 @@ public class CartTableModel extends AbstractTableModel {
         cart = new HashMap<>(shoppingCart);
         articles = new ArrayList<>(cart.keySet());
         amount = new ArrayList<>(cart.values());
-
     }
 
     public void setCart(Map<Article, Integer> shoppingCart) {
@@ -42,7 +41,6 @@ public class CartTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-
         Article selectedArticle = articles.get(row);
         int amount_value = amount.get(row);
         switch (col) {
@@ -53,7 +51,7 @@ public class CartTableModel extends AbstractTableModel {
                 return selectedArticle.getName();
             }
             case 2 -> {
-                return selectedArticle.getPrice();
+                return selectedArticle.getPriceStr();
             }
             case 3 -> {
                 return amount_value;
