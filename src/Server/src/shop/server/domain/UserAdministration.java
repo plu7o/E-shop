@@ -3,6 +3,7 @@ package shop.server.domain;
 import shop.common.exceptions.LoginFailedException;
 import shop.common.exceptions.UserAlreadyExistsException;
 import shop.common.exceptions.UserNotFoundException;
+import shop.common.exceptions.ShoppingCartException;
 import shop.common.valueObject.Article;
 import shop.common.valueObject.Invoice;
 import shop.common.valueObject.User;
@@ -204,7 +205,7 @@ public class UserAdministration {
                 pm.close();
         }
 
-        public void addToCart(User user, Article article, int amount) {
+        public void addToCart(User user, Article article, int amount) throws ShoppingCartException {
                 int updatedStock = article.getStock() - amount;
                 if (!(updatedStock <= 0)) {
                         user.getShoppingCart().addToCart(article, amount);
@@ -214,20 +215,23 @@ public class UserAdministration {
                         article.setStock(updatedStock);
                         article.setAvailable(false);
                 } else {
-                        //throw new ShoppingCartException
+                        throw new ShoppingCartException("");
                 }
         }
 
-        public void removeFromCart(User user, Article article, int amount) {
+        public void removeFromCart(User user, Article article, int amount) throws ShoppingCartException {
                 if (user.getShoppingCart().removeFromCart(article, amount)) {
                         article.addStock(amount);
                         article.setAvailable(true);
                 } else {
-                        // throw new Shopping cart Exception
+                        throw new ShoppingCartException("");
                 }
         }
 
         public void emptyCart(User user) {
+                for (Article article : user.getShoppingCart().getCart().keySet()) {
+                        article.addStock(user.getShoppingCart().getCart().get(article));
+                }
                 user.getShoppingCart().emptyCart();
         }
 
