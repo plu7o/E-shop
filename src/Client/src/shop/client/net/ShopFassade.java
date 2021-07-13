@@ -1,9 +1,6 @@
 package shop.client.net;
 
-import shop.common.exceptions.ArticleAlreadyExistsException;
-import shop.common.exceptions.ArticleNotFoundException;
-import shop.common.exceptions.LoginFailedException;
-import shop.common.exceptions.UserAlreadyExistsException;
+import shop.common.exceptions.*;
 import shop.common.interfaces.ShopInterface;
 import shop.common.valueObject.Article;
 import shop.common.valueObject.Invoice;
@@ -15,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 
 /**
@@ -928,7 +926,7 @@ public class ShopFassade implements ShopInterface {
      * @param article Artikel der hinzugefügt wird
      * @param amount  Anzahl der Artikel die hinzugefügt werden
      */
-    public void addToCart(User user, Article article, int amount) {
+    public void addToCart(User user, Article article, int amount) throws ShoppingCartException {
         sout.println("addToCart");
         sout.println(user.getUserNr());
         sout.println(article.getArticleNr());
@@ -941,6 +939,7 @@ public class ShopFassade implements ShopInterface {
                 System.out.println("Article added to cart");
             } else {
                 String message = sin.readLine();
+                throw new ShoppingCartException("");
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -954,7 +953,7 @@ public class ShopFassade implements ShopInterface {
      * @param article Artikel der entfernt wird
      * @param amount  Anzahl der Artikel die entfernt werden
      */
-    public void removeFromCart(User user, Article article, int amount) {
+    public void removeFromCart(User user, Article article, int amount) throws ShoppingCartException {
         sout.println("removeFromCart");
         sout.println(user.getUserNr());
         sout.println(article.getArticleNr());
@@ -967,6 +966,7 @@ public class ShopFassade implements ShopInterface {
                 System.out.println("Article removed from cart");
             } else {
                 String message = sin.readLine();
+                throw new ShoppingCartException("");
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -1014,5 +1014,26 @@ public class ShopFassade implements ShopInterface {
             return null;
         }
         return invoice;
+    }
+
+    public List<Article> getSorted(String by, boolean onlyAvailabe) {
+        List<Article> sortedArticles = new Vector<>();
+        sout.println("getSorted");
+        sout.println(by);
+        sout.println(onlyAvailabe);
+
+        String reply = "?";
+        try {
+            reply = sin.readLine();
+            int articlesSize = Integer.parseInt(reply);
+            for (int i = 0; i < articlesSize; i++) {
+                Article article = readArticlefromServer();
+                sortedArticles.add(article);
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+        return sortedArticles;
     }
 }
