@@ -30,17 +30,11 @@ public class Shop implements ShopInterface {
     @Override
     public void disconnect() throws IOException {}
 
-    public List<Article> getAllAvailableArticles() {
-        return articleAdministration.getAllAvailableArticles();
-    }
+    public List<Article> getAllAvailableArticles()  { return articleAdministration.getAllAvailableArticles(); }
 
-    public List<Article> getAllArticles() {
-        return articleAdministration.getAllArticles();
-    }
+    public List<Article> getAllArticles()           { return articleAdministration.getAllArticles(); }
 
-    public List<Article> searchArticle(String name) {
-        return articleAdministration.searchArticle(name);
-    }
+    public List<Article> searchArticle(String name) { return articleAdministration.searchArticle(name); }
 
     public Article getArticle(int articleNr) throws ArticleNotFoundException {
         return articleAdministration.getArticle(articleNr);
@@ -125,29 +119,15 @@ public class Shop implements ShopInterface {
         article.reduceStock(amount);
     }
 
-    public List<User> getCustomers() {
-        return userAdministration.getCustomerList();
-    }
-
-    public List<User> getStaff() {
-        return userAdministration.getStaff();
-    }
-
-    public List<User> getAllUsers() {
-        return userAdministration.getAllUsers();
-    }
-
-    public List<User> searchCustomer(int userID) {
-        return userAdministration.searchCustomer(userID);
-    }
-
-    public List<User> searchUsers(int userID) {
-        return userAdministration.searchUsers(userID);
-    }
-
-    public List<User> searchStaff(int userID) {
-        return userAdministration.searchStaff(userID);
-    }
+    public List<User> getCustomers()              { return userAdministration.getCustomerList(); }
+    public List<User> getStaff()                  { return userAdministration.getStaff(); }
+    public List<User> getAllUsers()               { return userAdministration.getAllUsers(); }
+    public List<User> searchCustomer(int userID)  { return userAdministration.getCustomer(userID); }
+    public List<User> searchUsers(int userID)     { return userAdministration.getUserAsList(userID); }
+    public List<User> searchStaff(int userID)     { return userAdministration.getStaff(userID); }
+    public List<User> searchCustomer(String name) { return userAdministration.searchCustomer(name); }
+    public List<User> searchUsers(String name)    { return userAdministration.searchUser(name); }
+    public List<User> searchStaff(String name)    { return userAdministration.searchStaff(name); }
 
     public User addCustomer(String name, String username, String password) throws UserAlreadyExistsException {
         User user = new User(name, userAdministration.userIDGen(), username, password, false, true);
@@ -235,9 +215,7 @@ public class Shop implements ShopInterface {
         userAdministration.removeFromCart(user, article, amount);
     }
 
-    public void emptyCart(User user) {
-        userAdministration.emptyCart(user);
-    }
+    public void emptyCart(User user) { userAdministration.emptyCart(user); }
 
     /**
      * Gibt einem das nach "by" sortierte Inventar, oder, bei Bedarf, nur die verfügbaren Artikel
