@@ -15,6 +15,15 @@ public class ArticleAdministration {
 
     private final PersistenceManager pm = new FilePersistenceManager();
 
+    /**
+     * Erstellt einen neuen Artikel und fügt ihn, falls noch nicht vorhanden, dem Inventar hinzu
+     * @param name         Name des Artikels
+     * @param price        Preis des Artikels
+     * @param stock        Bestand des Artikels
+     * @param available    ob der artikel auf bestand ist oder nicht
+     * @return die Artikelnummer des neuen Artikels
+     * @throws ArticleAlreadyExistsException wenn der Artikel bereits existiert
+     */
     public int add(String name, double price, int stock, boolean available) throws ArticleAlreadyExistsException {
         Article article = new Article(name, articleNrGen(), price, stock, available);
         if (nameInUse(name)) {
@@ -25,6 +34,16 @@ public class ArticleAdministration {
         }
     }
 
+    /**
+     * Erstellt einen neuen Massenartikel und fügt ihn, falls noch nicht vorhanden, dem Inventar hinzu
+     * @param name        Name des Artikels
+     * @param price       Preis des Artikels
+     * @param stock       Bestand des Artikels
+     * @param available   ob der artikel auf bestand ist oder nicht
+     * @param packageSize Verpackungsgröße
+     * @return die Artikelnummer des neuen Massenartikel
+     * @throws ArticleAlreadyExistsException wenn der Massenartikel bereits existiert
+     */
     public int addMassArticle(String name, double price, int stock, boolean available, int packageSize) throws ArticleAlreadyExistsException {
         MassArticle massArticle = new MassArticle(name, articleNrGen(), price, stock, available, packageSize);
         if (nameInUse(name)) {
@@ -35,6 +54,11 @@ public class ArticleAdministration {
         }
     }
 
+    /**
+     * Fügt einen neuen Artikel, falls noch nicht vorhanden, dem Inventar hinzu
+     * @param article der hinzuzufügende Artikel
+     * @throws ArticleAlreadyExistsException wenn der Artikel bereits existiert
+     */
     public void addArticle(Article article) throws ArticleAlreadyExistsException {
         if (inventory.contains(article)) {
             throw new ArticleAlreadyExistsException(article, "");
@@ -42,6 +66,11 @@ public class ArticleAdministration {
         inventory.add(article);
     }
 
+    /**
+     * Fügt einen neuen Massenartikel, falls noch nicht vorhanden, dem Inventar hinzu
+     * @param massArticle der hinzuzufügende Massenartikel
+     * @throws ArticleAlreadyExistsException wenn der Massenartikel bereits existiert
+     */
     public void addMassArticleToInventory(MassArticle massArticle) throws ArticleAlreadyExistsException {
         if (inventory.contains(massArticle)) {
             throw new ArticleAlreadyExistsException(massArticle, "");
@@ -49,11 +78,22 @@ public class ArticleAdministration {
         inventory.add(massArticle);
     }
 
+    /**
+     * löscht einen Artikel aus dem Inventar
+     * @param articleNr ID des zu löschenden Artikels
+     */
     public void delete(int articleNr) {
         int position = getPosOfArticleViaArticleNr(articleNr);
         if (position >= 0) { inventory.remove(position); }
     }
 
+    /**
+     * ändert die Werte eines Artikels
+     * @param name      Name des Artikels
+     * @param price     Preis des Artikels
+     * @param stock     Bestand des Artikels
+     * @param available ob der artikel auf bestand ist oder nicht
+     */
     public void changeArticleData(Article article, String name, double price, int stock, boolean available) {
         if (!name.equals("")) { article.setName(name); }
         if (price > 0)        { article.setPrice(price); }
@@ -62,10 +102,26 @@ public class ArticleAdministration {
     }
 
     /**
+     * ändert die Werte eines Massenartikels
+     * @param name        Name des Artikels
+     * @param price       Preis des Artikels
+     * @param stock       Bestand des Artikels
+     * @param available   ob der artikel auf bestand ist oder nicht
+     * @param packageSize Verpackungsgröße
+     */
+    public void changeMassArticleData(MassArticle article, String name, double price, int stock, boolean available, int packageSize) {
+        if (!name.equals("")) { article.setName(name); }
+        if (price > 0)        { article.setPrice(price); }
+        if (stock >= 0)       { article.setStock(stock); }
+        if (packageSize > 0)  { article.setPackageSize(packageSize); }
+        article.setAvailable(available);
+    }
+
+    /**
      * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, falls vorhanden, zurück
      * andernfalls wird -1 zurückgegeben
-     * @param articleNr
-     * @return
+     * @param articleNr ID des gesuchten Artikels
+     * @return Position im Inventar
      */
     private int getPosOfArticleViaArticleNr(int articleNr) {
         for (int i = 0; i < inventory.size(); i++) {
@@ -77,7 +133,8 @@ public class ArticleAdministration {
     /**
      * Durchsucht das Inventar und gibt die Position des gewünschten Artikels, falls vorhanden, zurück
      * andernfalls wird -1 zurückgegeben
-     * @return
+     * @param name Name des gesuchten Artikels
+     * @return Position im Inventar
      */
     private int getPosOfArticleViaName(String name) {
         for (int i = 0; i < inventory.size(); i++) {
@@ -150,6 +207,9 @@ public class ArticleAdministration {
         return sorted;
     }
 
+    /**
+     * Gibt das Inventar nach Name sortiert zurück
+     */
     public List<Article> getInventorySortedByName() {
         List<Article> toSort = inventory;
         Collections.sort(toSort, Comparator.comparing(shop.common.valueObject.Article::getName));
@@ -201,15 +261,15 @@ public class ArticleAdministration {
         return getOnlyAvailable(getInventorySortedByStock());
     }
 
+    /**
+     * Gibt alle verfügbaren Artikel des Inventars nach Name sortiert zurück
+     * Ruft getOnlyAvailable() und getInventorySortedByName() auf
+     */
     public List<Article> getAllAvailableArticlesSortedByName() {
         return getOnlyAvailable(getInventorySortedByName());
     }
 
     //misc
-    private String turnToEuro(float price) {
-        return (int)price + "," + (int)(price*100-(int)price*100) + "€" ;
-    }
-
     /**
      * Geht alle Artikel durch und gibt die nächste zu verwendende Artikelnummer zurück
      */
@@ -223,6 +283,10 @@ public class ArticleAdministration {
         return articleNr;
     }
 
+    /**
+     * Durchsucht das Inventar und gibt den gewünschten Artikel, falls vorhanen, zurück
+     * @param name Name des Artikels
+     */
     public List<Article> searchArticle(String name) {
         List<Article> search = new Vector<>();
         for (Article article : inventory) {
@@ -234,9 +298,9 @@ public class ArticleAdministration {
     }
 
     /**
-     * Durchsucht das Inventar und gibt den gewünschten Artikel, fals vorhanen, zurück
-     * @param articleNr
-     * @throws ArticleNotFoundException
+     * Durchsucht das Inventar und gibt den gewünschten Artikel, falls vorhanen, zurück
+     * @param articleNr ID des Artikels
+     * @throws ArticleNotFoundException wenn der Artikel nicht gefunden wurde
      */
     public Article getArticle(int articleNr) throws ArticleNotFoundException {
         for (Article article : inventory) {
@@ -247,6 +311,11 @@ public class ArticleAdministration {
         return null;
     }
 
+    /**
+     * Lädt alle Artikel aus der Datei "data"
+     * @param data Name der Datei, in der gespeichert wurde
+     * @throws IOException
+     */
     public void readArticleData(String data) throws IOException {
         pm.openForReading(data);
         Article article;
@@ -255,15 +324,18 @@ public class ArticleAdministration {
             if (article != null) {
                 try {
                     addArticle(article);
-                } catch (ArticleAlreadyExistsException e) {
-
-                }
+                } catch (ArticleAlreadyExistsException e) {}
             }
 
         } while (article != null);
         pm.close();
     }
 
+    /**
+     * Lädt alle Massenartikel aus der Datei "data"
+     * @param data Name der Datei, in der gespeichert wurde
+     * @throws IOException
+     */
     public void readMassArticleData(String data) throws IOException {
         pm.openForReading(data);
         MassArticle massArticle;
@@ -272,9 +344,7 @@ public class ArticleAdministration {
             if (massArticle != null) {
                 try {
                     addMassArticleToInventory(massArticle);
-                } catch (ArticleAlreadyExistsException e) {
-
-                }
+                } catch (ArticleAlreadyExistsException e) {}
             }
         } while (massArticle != null);
         pm.close();
@@ -282,7 +352,7 @@ public class ArticleAdministration {
 
     /**
      * Gibt jeden Artikel an den FilePersistenceManager zum speichern weiter
-     * @param data
+     * @param data Name der Datei, in der gespeichert werden soll
      * @throws IOException
      */
     public void saveArticle(String data) throws IOException {
@@ -297,7 +367,7 @@ public class ArticleAdministration {
 
     /**
      * Gibt jeden Massenartikel an den FilePersistenceManager zum speichern weiter
-     * @param data
+     * @param data Name der Datei, in der gespeichert werden soll
      * @throws IOException
      */
     public void saveMassArticle(String data) throws IOException {
