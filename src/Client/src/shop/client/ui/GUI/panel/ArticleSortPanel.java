@@ -28,7 +28,6 @@ public class ArticleSortPanel extends JPanel {
         shop = shopInterface;
         articleSortListener = listener;
 
-
         setup();
         setupEvents();
     }
@@ -45,28 +44,28 @@ public class ArticleSortPanel extends JPanel {
     public class SortListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String s = (String) sortDropDown.getSelectedItem();
-                switch (s) {
-                    case "ID" -> {
-                        List<Article> articles = shop.getSorted("ID", true);
-                        articleSortListener.onSortID(articles);
-                        //ID
-                    }
-                    case "Name" -> {
-                        List<Article> articles = shop.getSorted("name", true);
-                        articleSortListener.onSortName(articles);
-                        //Name
-                    }
-                    case "Price" -> {
-                        List<Article> articles = shop.getSorted("price", true);
-                        articleSortListener.onSortPrice(articles);
-                        //Pirce
-                    }
-                    case "Stock" -> {
-                        List<Article> articles = shop.getSorted("stock", true);
-                        articleSortListener.onSortPrice(articles);
-                        //stock
-                    }
+            switch (s) {
+                case "ID" -> {
+                    List<Article> articles = shop.getSorted("ID", true);
+                    articleSortListener.onSortID(articles);
+                    //ID
                 }
+                case "Name" -> {
+                    List<Article> articles = shop.getSorted("name", true);
+                    articleSortListener.onSortName(articles);
+                    //Name
+                }
+                case "Price" -> {
+                    List<Article> articles = shop.getSorted("price", true);
+                    articleSortListener.onSortPrice(articles);
+                    //Pirce
+                }
+                case "Stock" -> {
+                    List<Article> articles = shop.getSorted("stock", true);
+                    articleSortListener.onSortPrice(articles);
+                    //stock
+                }
+            }
         }
     }
 }
