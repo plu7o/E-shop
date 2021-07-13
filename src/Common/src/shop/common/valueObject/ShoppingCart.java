@@ -42,6 +42,9 @@ public class ShoppingCart {
         return succeeded;
     }
 
+    /**
+     * leert den Warenkorb komplett
+     */
     public void emptyCart() { cart.clear(); }
 
     public String toString() {
