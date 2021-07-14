@@ -19,7 +19,7 @@ public class MassArticle extends Article {
         this.available = available;
         // this.massArticle = massArticle;
     }
-    
+
     public String toString() {
         String availability = this.available ? "in stock" : "SOLD OUT";
         return ("Nr: " + articleNr + " | Article-name: " + name + " | Price: " + price + "€" + " | Availability: " + availability + " | Package Size: " + packageSize );
