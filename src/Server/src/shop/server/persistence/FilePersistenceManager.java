@@ -16,7 +16,7 @@ public class FilePersistenceManager implements PersistenceManager {
     private PrintWriter writer = null;
 
     /**
-     * Öffnet "file" um aus ihr zu Lesen
+     * Öffnet "file" um aus ihr zu lesen
      * @param file die zu öffnende Datei
      * @throws FileNotFoundException
      */
