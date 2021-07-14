@@ -326,7 +326,6 @@ public class ArticleAdministration {
                     addArticle(article);
                 } catch (ArticleAlreadyExistsException e) {}
             }
-
         } while (article != null);
         pm.close();
     }
