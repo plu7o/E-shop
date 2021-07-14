@@ -100,13 +100,13 @@ public class ClientRequestProcessor implements Runnable {
                     case "removeFromCart" -> removeFromCart();
                     case "emptyCart" -> emptyCart();
                     case "buy" -> buy();
-                    case "getSorted" -> getSorted(); 
+                    case "getSorted" -> getSorted();
                 }
             }
         } while (!(input.equals("q")));
         disconnect();
     }
-    
+
     /**
      * Methode um verbindung zum Client abbzubrechen
      */
@@ -123,8 +123,8 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-     /**
+
+    /**
      * Methode gibt alle erhlätlichen Article zurück und sendet sie an den Client gemäß den Server Protokol
      */
     private void listAvailableArticles() {
@@ -132,8 +132,8 @@ public class ClientRequestProcessor implements Runnable {
         articles = shop.getAllAvailableArticles();
         sendArticleListToClient(articles);
     }
-    
-     /**
+
+    /**
      * Methode gibt alle Article zurück und sendet sie an den Client gemäß den Server Protokol
      */
     private void listAllArticles() {
@@ -141,10 +141,10 @@ public class ClientRequestProcessor implements Runnable {
         articles = shop.getAllArticles();
         sendArticleListToClient(articles);
     }
-    
+
     /**
-    * Methode um Artikel Liste an den CLient zu schicken gemäß den Server Protokol
-    */
+     * Methode um Artikel Liste an den CLient zu schicken gemäß den Server Protokol
+     */
     private void sendArticleListToClient(List<Article> articles) {
         out.println(articles.size());
         for (Article article : articles) {
@@ -153,18 +153,18 @@ public class ClientRequestProcessor implements Runnable {
     }
 
     /**
-    * Methode um Liste mit Usern an den CLient zu schicken gemäß den Server Protokol
-    */
+     * Methode um Liste mit Usern an den CLient zu schicken gemäß den Server Protokol
+     */
     private void sendUserListToClient(List<User> users) {
         out.println(users.size());
         for (User user : users) {
             sendUserToClient(user);
         }
     }
-    
-     /**
-    * Methode um einzelnes Artikel objekt an den CLient zu schicken gemäß den Server Protokol
-    */
+
+    /**
+     * Methode um einzelnes Artikel objekt an den CLient zu schicken gemäß den Server Protokol
+     */
     private void sendArticleToClient(Article article) {
         out.println(article.getArticleNr());
         out.println(article.getName());
@@ -172,10 +172,10 @@ public class ClientRequestProcessor implements Runnable {
         out.println(article.getStock());
         out.println(article.isAvailable());
     }
-    
-     /**
-    * Methode um einzelnes User objekt an den CLient zu schicken gemäß den Server Protokol
-    */
+
+    /**
+     * Methode um einzelnes User objekt an den CLient zu schicken gemäß den Server Protokol
+     */
     private void sendUserToClient(User user) {
         Map<Article, Integer> shoppingCart = user.getShoppingCart().getCart();
         out.println(user.getName());
@@ -191,10 +191,10 @@ public class ClientRequestProcessor implements Runnable {
             out.println(shoppingCart.get(article));
         }
     }
-    
-     /**
-    * Methode um Invoice an den CLient zu schicken
-    */
+
+    /**
+     * Methode um Invoice an den CLient zu schicken
+     */
     private void sendInvoiceToClient(Invoice invoice) {
         Map<Article, Integer> shoppingCart = invoice.getShoppingCart();
         out.println(invoice.getName());
@@ -205,12 +205,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println(shoppingCart.get(article));
         }
     }
-    
-     /**
-    * Methode git ein liste mit Artikeln zurück die mit den suchbegriff übereinstimmen
-    * Liest den such begriff vom Client
-    * Und sende die listen an den Client
-    */
+
+    /**
+     * Methode git ein liste mit Artikeln zurück die mit den suchbegriff übereinstimmen
+     * Liest den such begriff vom Client
+     * Und sende die listen an den Client
+     */
     private void searchArticle() {
         String input = null;
         //Antwort vom Client wird gelesen
@@ -230,11 +230,11 @@ public class ClientRequestProcessor implements Runnable {
         // suchergebnis wird an Client zurück geschitk
         sendArticleListToClient(articles);
     }
-    
+
     /**
-    * Methode gibt einen einzelnen Artikel der mit der Artikel nummer übereinstimmt zurück
-    * und sende den Artikel an den Client zurück
-    */
+     * Methode gibt einen einzelnen Artikel der mit der Artikel nummer übereinstimmt zurück
+     * und sende den Artikel an den Client zurück
+     */
     private void getArticle() {
         String input = null;
         try {
@@ -254,12 +254,12 @@ public class ClientRequestProcessor implements Runnable {
             System.out.println(e2.getMessage());
         }
     }
-    
+
     /**
-    * Methode um Artikel hinzuzufügen
-    * Liest die Parameter vom Client ein
-    * und erstellt dann den Artikel
-    */
+     * Methode um Artikel hinzuzufügen
+     * Liest die Parameter vom Client ein
+     * und erstellt dann den Artikel
+     */
     private void addArticle() {
         String input = null;
 
@@ -318,12 +318,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
-     /**
-    * Methode um Massen Artikel hinzuzufügen
-    * Liest die Parameter vom Client ein
-    * und erstellt dann den Massen Artikel
-    */
+
+    /**
+     * Methode um Massen Artikel hinzuzufügen
+     * Liest die Parameter vom Client ein
+     * und erstellt dann den Massen Artikel
+     */
     public void addMassArticle() {
         String input = null;
 
@@ -390,12 +390,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
-     /**
-    * Methode um Artikel zu Löschen
-    * Liest die Parameter vom Client ein
-    * und Löscht dann den Artikel
-    */
+
+    /**
+     * Methode um Artikel zu Löschen
+     * Liest die Parameter vom Client ein
+     * und Löscht dann den Artikel
+     */
     public void deleteArticle() {
         String input = null;
 
@@ -427,11 +427,11 @@ public class ClientRequestProcessor implements Runnable {
         }
         out.println("SUCCESS");
     }
-    
+
     /**
-    * Methode zum ändern der Artikel Parameter
-    * Liste neue werte vom Client und updated den Artikel mit den neuen informationen
-    */
+     * Methode zum ändern der Artikel Parameter
+     * Liste neue werte vom Client und updated den Artikel mit den neuen informationen
+     */
     public void updateArticleData() {
         String input = null;
 
@@ -496,11 +496,11 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-      /**
-    * Methode zum ändern der Massen Artikel Parameter
-    * Liste neue werte vom Client und updated den Massen Artikel mit den neuen informationen
-    */
+
+    /**
+     * Methode zum ändern der Massen Artikel Parameter
+     * Liste neue werte vom Client und updated den Massen Artikel mit den neuen informationen
+     */
     public void updateMassArticleData() {
         String input = null;
 
@@ -573,11 +573,11 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
+
     /**
-    * Methode um den bestand eines Artikels zu erhöhen
-    *
-    */
+     * Methode um den bestand eines Artikels zu erhöhen
+     *
+     */
     public void addStock() {
         String input = null;
 
@@ -620,11 +620,11 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-      /**
-    * Methode um den bestand eines Atikel zu verringern
-    *
-    */
+
+    /**
+     * Methode um den bestand eines Atikel zu verringern
+     *
+     */
     public void reduceStock() {
         String input = null;
 
@@ -667,8 +667,8 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-     /**
+
+    /**
      * Methode gibt alle Kunden zurück und sendet sie an den Client gemäß den Server Protokol
      */
     public void getCustomers() {
@@ -676,8 +676,8 @@ public class ClientRequestProcessor implements Runnable {
         customers = shop.getCustomers();
         sendUserListToClient(customers);
     }
-    
-     /**
+
+    /**
      * Methode gibt alle Mitarbeiter zurück und sendet sie an den Client gemäß den Server Protokol
      */
     public void getStaff() {
@@ -685,8 +685,8 @@ public class ClientRequestProcessor implements Runnable {
         staff = shop.getStaff();
         sendUserListToClient(staff);
     }
-    
-     /**
+
+    /**
      * Methode gibt alle User zurück und sendet sie an den Client gemäß den Server Protokol
      */
     public void getAllUsers() {
@@ -694,12 +694,12 @@ public class ClientRequestProcessor implements Runnable {
         staff = shop.getAllUsers();
         sendUserListToClient(staff);
     }
-    
+
     /**
-    * Methode git ein liste mit Kunden zurück die mit den suchbegriff übereinstimmen
-    * Liest den such begriff vom Client
-    * Und sende die listen an den Client zurück
-    */
+     * Methode git ein liste mit Kunden zurück die mit den suchbegriff übereinstimmen
+     * Liest den such begriff vom Client
+     * Und sende die listen an den Client zurück
+     */
     public void searchCustomer() {
         String input = null;
         try {
@@ -720,12 +720,12 @@ public class ClientRequestProcessor implements Runnable {
             sendUserListToClient(customers);
         }
     }
-    
-     /**
-    * Methode git ein liste mit Mitarbeitern zurück die mit den suchbegriff übereinstimmen
-    * Liest den such begriff vom Client
-    * Und sende die listen an den Client zurück
-    */
+
+    /**
+     * Methode git ein liste mit Mitarbeitern zurück die mit den suchbegriff übereinstimmen
+     * Liest den such begriff vom Client
+     * Und sende die listen an den Client zurück
+     */
     public void searchStaff() {
         String input = null;
         try {
@@ -746,12 +746,12 @@ public class ClientRequestProcessor implements Runnable {
             sendUserListToClient(staff);
         }
     }
-    
-     /**
-    * Methode git ein liste mit Usern zurück die mit den suchbegriff übereinstimmen
-    * Liest den such begriff vom Client
-    * Und sende die listen an den Client zurück
-    */
+
+    /**
+     * Methode git ein liste mit Usern zurück die mit den suchbegriff übereinstimmen
+     * Liest den such begriff vom Client
+     * Und sende die listen an den Client zurück
+     */
     public void searchUsers() {
         String input = null;
         try {
@@ -772,12 +772,12 @@ public class ClientRequestProcessor implements Runnable {
             sendUserListToClient(users);
         }
     }
-    
-     /**
-    * Methode um Kunden hinzuzufügen
-    * Liest die Parameter vom Client ein
-    * und erstellt dann den Kunden (user)
-    */
+
+    /**
+     * Methode um Kunden hinzuzufügen
+     * Liest die Parameter vom Client ein
+     * und erstellt dann den Kunden (user)
+     */
     public void addCustomer() {
         String input = null;
 
@@ -820,12 +820,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
-     /**
-    * Methode um Mitarbeiter hinzuzufügen
-    * Liest die Parameter vom Client ein
-    * und erstellt dann den Mitarbeiter (user)
-    */
+
+    /**
+     * Methode um Mitarbeiter hinzuzufügen
+     * Liest die Parameter vom Client ein
+     * und erstellt dann den Mitarbeiter (user)
+     */
     public void addStaff() {
         String input = null;
 
@@ -878,12 +878,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
+
     /**
-    * Methode um User zu Löschen
-    * Liest die Parameter vom Client ein
-    * und Löscht dann den User
-    */
+     * Methode um User zu Löschen
+     * Liest die Parameter vom Client ein
+     * und Löscht dann den User
+     */
     public void deleteUser() {
         String input = null;
 
@@ -911,14 +911,14 @@ public class ClientRequestProcessor implements Runnable {
         out.println("SUCCESS");
     }
 
-     
+
     /**
-    * Methode um User zu finden der mit der Userid übereinstimmt
-    * Liest die Parameter vom Client ein
-    * und gibt den passenden user zurück an den Client
-    */
+     * Methode um User zu finden der mit der Userid übereinstimmt
+     * Liest die Parameter vom Client ein
+     * und gibt den passenden user zurück an den Client
+     */
     public void getUser() {
-        String input = null;       
+        String input = null;
         try {
             input = in.readLine();
         } catch (Exception e) {
@@ -932,10 +932,10 @@ public class ClientRequestProcessor implements Runnable {
         sendUserToClient(user);
     }
 
-     /**
-    * Methode zum ändern der User Parameter
-    * Liste neue werte vom Client und updated den User mit den neuen informationen
-    */
+    /**
+     * Methode zum ändern der User Parameter
+     * Liste neue werte vom Client und updated den User mit den neuen informationen
+     */
     public void updateUserData() {
         String input = null;
 
@@ -1000,11 +1000,11 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
+
     /**
-    * Methode zum einloggen der User
-    * Liest username und password name von Client und schickt passenden User zurück an den CLient 
-    */
+     * Methode zum einloggen der User
+     * Liest username und password name von Client und schickt passenden User zurück an den CLient
+     */
     public void login() {
         String input = null;
 
@@ -1033,11 +1033,11 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
+
     /**
-    * Methode zum Registrieren
-    * liest username password und name von Client und erstellt User objekt
-    */
+     * Methode zum Registrieren
+     * liest username password und name von Client und erstellt User objekt
+     */
     public void signup() {
         String input = null;
 
@@ -1075,8 +1075,8 @@ public class ClientRequestProcessor implements Runnable {
             out.println(e.getMessage());
         }
     }
-    
-     /**
+
+    /**
      * Methode zum Speichern des Userbestands.
      *
      */
@@ -1089,8 +1089,8 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-     /**
+
+    /**
      * Methode zum Speichern des Artikelbestands.
      *
      */
@@ -1103,8 +1103,8 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-     /**
+
+    /**
      * Methode zum Speichern des Massen Artikelbestands.
      *
      */
@@ -1117,12 +1117,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
+
     /**
-    * Methode um Artikel den Warenkorb hinzufügen
-    * Liest User ID, Article ID und anzahl von Client
-    * und fügt den passenden Article den passenden warenkorb hinzu
-    */
+     * Methode um Artikel den Warenkorb hinzufügen
+     * Liest User ID, Article ID und anzahl von Client
+     * und fügt den passenden Article den passenden warenkorb hinzu
+     */
     public void addToCart() {
         String input = null;
 
@@ -1163,12 +1163,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-     /**
-    * Methode um Artikel den Warenkorb zu entnehmen
-    * Liest User ID, Article ID und anzahl von Client
-    * und entfernt den passenden Article vom passenden warenkorb 
-    */
+
+    /**
+     * Methode um Artikel den Warenkorb zu entnehmen
+     * Liest User ID, Article ID und anzahl von Client
+     * und entfernt den passenden Article vom passenden warenkorb
+     */
     public void removeFromCart() {
         String input = null;
 
@@ -1210,10 +1210,10 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
+
     /**
-    * Methode um den Warenkorb eines Users zu Leeren
-    */
+     * Methode um den Warenkorb eines Users zu Leeren
+     */
     public void emptyCart() {
         String input = null;
 
@@ -1235,12 +1235,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-    
-    
+
+
     /**
-    * Methode um Artikel im Warenkorb zu Kaufen
-    * erstellt Invoice objekt und gibt das den Client zurück
-    */
+     * Methode um Artikel im Warenkorb zu Kaufen
+     * erstellt Invoice objekt und gibt das den Client zurück
+     */
     public void buy() {
         String input = null;
 
@@ -1266,12 +1266,12 @@ public class ClientRequestProcessor implements Runnable {
             out.println("ERROR");
         }
     }
-       
+
     /**
-    * Methode gibt Sortierte Liste von Artikeln zurück
-    * list von Client nach was sortiert werden soll
-    * schickt sortierte Liste zurück an den Client
-    */
+     * Methode gibt Sortierte Liste von Artikeln zurück
+     * list von Client nach was sortiert werden soll
+     * schickt sortierte Liste zurück an den Client
+     */
     public void getSorted() {
         String input = null;
 
