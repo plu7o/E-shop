@@ -124,7 +124,7 @@ public class CUI {
 
         if (logged_in_user == null) {
             switch (input) {
-                case "1" -> {
+                case "1" -> {   //Login
                     System.out.print(prefix() + "Username: ");
                     //username wird eingelesen
                     username = readInput();
@@ -138,7 +138,7 @@ public class CUI {
                         System.out.println(e.getMessage());
                     }
                 }
-                case "2" -> {
+                case "2" -> {       //Registrieren
                     System.out.print(prefix() + "Name: ");
                     name = readInput();
                     System.out.print(prefix() + "Username: ");
@@ -151,11 +151,11 @@ public class CUI {
                         System.out.println(e.getMessage());
                     }
                 }
-                case "3" -> {
+                case "3" -> {   //Produkte anzeigen
                     list = shop.getAllAvailableArticles();
                     showArticleList(list);
                 }
-                case "4" -> {
+                case "4" -> {   //Artikel suchen
                     System.out.print(prefix() + "Article-name > ");
                     articleName = readInput();
                     list = shop.searchArticle(articleName);
@@ -165,17 +165,17 @@ public class CUI {
             }
         } else if (logged_in_user.isCustomer()) {
             switch (input) {
-                case "1":
+                case "1":   //Artikel durchsuchen
                     System.out.print(prefix() + "Article-name > ");
                     articleName = readInput();
                     list = shop.searchArticle(articleName);
                     showArticleList(list);
                     break;
-                case "2":
+                case "2":   //alle Artikel anzeigen
                     list = shop.getAllAvailableArticles();
                     showArticleList(list);
                     break;
-                case "3":
+                case "3":   //Artikel dem Warenkorb hinzufügen
                     try {
                         System.out.print(prefix() + "Article-nr > ");
                         String articleNrStr = readInput();
@@ -193,7 +193,7 @@ public class CUI {
                         e.printStackTrace();
                     }
                     break;
-                case "4":
+                case "4":   //Artikel aus dem Warenkorb entfernen
                     try {
                         System.out.print(prefix() + "Article-nr > ");
                         String articleNrStr = readInput();
@@ -212,19 +212,19 @@ public class CUI {
                         e.printStackTrace();
                     }
                     break;
-                case "5":
+                case "5":   //Warenkorb anzeigen
                     User user = shop.getUser(logged_in_user.getUserNr());
                     System.out.println(user.getShoppingCart() + " | Total: " + user.getShoppingCart().getTotal());
                     break;
-                case "6":
+                case "6":   //Warenkorb komplett leeren
                     shop.emptyCart(logged_in_user);
                     break;
-                case "7":
+                case "7":   //kaufen
                     logged_in_user = shop.getUser(logged_in_user.getUserNr());
                     Invoice invoice = shop.buy(logged_in_user);
                     System.out.println(invoice);
                     break;
-                case "x":
+                case "x":   //log out
                     System.out.println("successfully logged out");
                     logged_in_user = null;
                     break;
@@ -233,9 +233,9 @@ public class CUI {
             }
         } else if (logged_in_user.isStaff()) {
             switch (input) {
-                case "1" -> articleAdministration = true;
-                case "2" -> userAdministration = true;
-                case "x" -> {
+                case "1" -> articleAdministration = true;   //Artikeladministration öffnen
+                case "2" -> userAdministration = true;      //Nutzeradministration öffnen
+                case "x" -> {                               //log out
                     System.out.println("successfully logged out");
                     logged_in_user = null;
                 }
@@ -256,7 +256,7 @@ public class CUI {
         User user;
 
         switch (input) {
-            case "1":
+            case "1":   //Nutzer durchsuchen
                 try {
                     System.out.print(prefix() + "User-Nr > ");
                     userNrStr = readInput();
@@ -267,15 +267,15 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "2":
+            case "2":   //alle Kunden anzeigen
                 list = shop.getCustomers();
                 showUserList(list);
                 break;
-            case "3":
+            case "3":   //alle Mitarbeiter anzegen
                 list = shop.getStaff();
                 showUserList(list);
                 break;
-            case "4":
+            case "4":   //Kunden hinzufügen
                 System.out.print(prefix() + "name > ");
                 name = readInput();
 
@@ -291,7 +291,7 @@ public class CUI {
                     System.out.println(e.getMessage());
                 }
                 break;
-            case "5":
+            case "5":   //Mitarbeiter hinzufügen
                 System.out.print(prefix() + "name > ");
                 name = readInput();
 
@@ -307,7 +307,7 @@ public class CUI {
                     System.out.println(e.getMessage());
                 }
                 break;
-            case "6":
+            case "6":   //Nutzer löschen
                 try {
                     System.out.print(prefix() + "User-Nr > ");
                     userNrStr = readInput();
@@ -318,7 +318,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "7":
+            case "7":   //Nutzer bearbeiten
                 try {
                     System.out.print(prefix() + "User-Nr > ");
                     userNrStr = readInput();
@@ -342,7 +342,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "x":
+            case "x":   //zurück
                 userAdministration = false;
                 break;
             default:
@@ -365,17 +365,17 @@ public class CUI {
         int packageSize;
 
         switch (input) {
-            case "1":
+            case "1":       //Artikel durchsuchen
                 System.out.print(prefix() + "Article-name > ");
                 articleName = readInput();
                 list = shop.searchArticle(articleName);
                 showArticleList(list);
                 break;
-            case "2":
+            case "2":       //alle Artikel anzeigen
                 list = shop.getAllArticles();
                 showArticleList(list);
                 break;
-            case "3":
+            case "3":       //Artikel hinzufügen
                 try {
                     System.out.print(prefix() + "Select Article type [article] | [mass] > ");
                     String type = readInput();
@@ -424,7 +424,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "4":
+            case "4":       //Artikel löschen
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -434,7 +434,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "5":
+            case "5":       //Artikel bearbeiten
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -474,7 +474,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "6":
+            case "6":       //Artikelbestand hinzufügen
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -488,7 +488,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "7":
+            case "7":       //Artikelbestand verringern
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -502,7 +502,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "8":
+            case "8":       //Log anzeigen
                 try {
                     System.out.print(prefix() + "Article-Nr > ");
                     String articleNrStr = readInput();
@@ -513,7 +513,7 @@ public class CUI {
                     System.out.println("Wrong input!");
                 }
                 break;
-            case "x":
+            case "x":       //zurück
                 articleAdministration = false;
                 break;
             default:
