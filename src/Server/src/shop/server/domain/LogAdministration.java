@@ -27,7 +27,7 @@ public class LogAdministration {
     public final int EDIT_CUSTOMER   = 42;  //[staffNr, staffName,  userNr, attribute:newValue...]
     public final int DELETE_CUSTOMER = 43;  //[staffNr, staffName,  userNr]
 
-    public final int TRANSACTION     = 50;  //[userNr,  userName,   price, articleNr:amount...]
+    public final int TRANSACTION     = 50;  //[userNr,  userName,   price, articleNr:amount... , amount]
 
     /**
      * Methode, um jede speicherwürdige Aktion in die LOG-Datei einzutragen
@@ -64,9 +64,9 @@ public class LogAdministration {
             case DELETE_CUSTOMER -> text += " | del customer | user " +    data[2] + " deleted by: " + data[1] + " (" + data[0] + ")";
             case ARTICLE_STOCK ->   text += " | mod stock    | stock of article " + data[2] + " changed amount: " + data[3] + " | changed by: " + data[1] + " (" + data[0] + ")";
             case TRANSACTION -> {
-                text += " | purchase     | user " + data[1] + " (" + data[0] + ") bought " + data[3] + " articles for " + data[2] + " [";
-                for (int i = 4; i < data.length; i++) {
-                    if (i > 4) { text += ", "; }
+                text += " | purchase     | user " + data[1] + " (" + data[0] + ") bought " + data[data.length-1] + " articles for " + data[2] + " [";
+                for (int i = 3; i < data.length - 1; i++) {
+                    if (i > 3) { text += ", "; }
                     text += data[i];
                 }
                 text += "]";
