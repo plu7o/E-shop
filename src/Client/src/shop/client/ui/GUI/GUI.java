@@ -59,10 +59,10 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
         }
         initialize();
     }
-        
+
     /**
-    * Methode Baut die GUI Panel beim initialisieren zusammen
-    */
+     * Methode Baut die GUI Panel beim initialisieren zusammen
+     */
     private void initialize() throws IOException {
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -99,10 +99,10 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
         setSize(640, 480);
         setVisible(true);
     }
-        
+
     /**
-    * Methode erstellt Hilfs menu stellt es dar
-    */
+     * Methode erstellt Hilfs menu stellt es dar
+     */
     private void setupMenu() {
         setLayout(new BorderLayout());
         JMenuBar menuBar = new JMenuBar();
@@ -112,10 +112,10 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
     }
 
     /**
-    * Methode baut die passenden Panels zusammen
-    * @param panelname  gibt an welche panel zusammen gebaut werden sollen
-    * @param tabelname  gibt an welche tabelle benutz werden soll
-    */
+     * Methode baut die passenden Panels zusammen
+     * @param panelname  gibt an welche panel zusammen gebaut werden sollen
+     * @param tabelname  gibt an welche tabelle benutz werden soll
+     */
     private void setPanel(String panelname, String tabelname) {
         switch (panelname) {
             case "user" -> {
@@ -185,12 +185,12 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
             }
         }
     }
-    
+
     /**
-    * Imlemtierung der LoginListener methode
-    * ruft setPanel() auf und übergibt dan passenden Panel name und Table name
-    * @param user       eingeloggter User 
-    */
+     * Imlemtierung der LoginListener methode
+     * ruft setPanel() auf und übergibt dan passenden Panel name und Table name
+     * @param user       eingeloggter User
+     */
     @Override
     public void onLogin(User user) {
         loggedInUser = user;
@@ -204,189 +204,195 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
             setPanel("staff", "Article");
         }
     }
-    
+
     /**
-    * Implemtierung der SearchResultListener Methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    * @param articles   Liste von Artikeln
-    */           
+     * Implemtierung der SearchResultListener Methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     * @param articles   Liste von Artikeln
+     */
     @Override
     public void onSearchResult(List<Article> articles) {
         articleTablePanel.updateArticles(articles);
     }
-        
+
     /**
-    * Implemtierung der StaffMenuListener methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    */
+     * Implemtierung der StaffMenuListener methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     */
     @Override
     public void onArticleAdded() {
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
     /**
-    * Implemtierung der StaffMenuListener methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    */
+     * Implemtierung der StaffMenuListener methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     */
     @Override
     public void onArticleDeleted() {
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
     /**
-    * Implemtierung der StaffMenuListener methode
-    * updated die User tabelle mit der passenden User liste
-    */
+     * Implemtierung der StaffMenuListener methode
+     * updated die User tabelle mit der passenden User liste
+     */
     @Override
     public void onUserAdded() {
         List<User> currentUsers = shop.getAllUsers();
         userTabelPanel.updateUser(currentUsers);
     }
-    
+
     /**
-    * Implemtierung der StaffMenuListener methode
-    * updated die User tabelle mit der passenden User liste
-    */
+     * Implemtierung der StaffMenuListener methode
+     * updated die User tabelle mit der passenden User liste
+     */
     @Override
     public void onUserDeleted() {
         List<User> currentUsers = shop.getAllUsers();
         userTabelPanel.updateUser(currentUsers);
     }
-        
+
     /**
-    * Implemtierung der StaffMenuListener methode
-    * ruft setPanel auf und übergibt den passen panelname und tablename
-    */
+     * Implemtierung der StaffMenuListener methode
+     * ruft setPanel auf und übergibt den passen panelname und tablename
+     */
     @Override
     public void onShowArticle() {
         setPanel("staff", "Article");
     }
-    
+
     /**
-    * Implemtierung der StaffMenuListener methode
-    * ruft setPanel auf und übergibt den passen panelname und tablename
-    */
+     * Implemtierung der StaffMenuListener methode
+     * ruft setPanel auf und übergibt den passen panelname und tablename
+     */
     @Override
     public void onShowUser() {
         setPanel("staff", "User");
     }
-        
+
     /**
-    * Implemtierung der CustomerMenuListener Methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    */
+     * Implemtierung der CustomerMenuListener Methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     */
     @Override
     public void onAddedToCart() {
         //update User shoppincart
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
-    
-                     
+
+
     /**
-    * Implemtierung der CustomerMenuListener Methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    */
+     * Implemtierung der CustomerMenuListener Methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     */
     @Override
     public void onRemovedFromCart() {
         //update User shoppincart
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
-    
-                     
+
+
     /**
-    * Implemtierung der CustomerMenuListener Methode
-    * erzeugt eine neues CartTablePanel damit wird ein JScrollPane objekt erzuegt
-    * ruft dann setPanel auf
-    * @param shoppingCart       Warenkorb des Kunden
-    */
+     * Implemtierung der CustomerMenuListener Methode
+     * erzeugt eine neues CartTablePanel damit wird ein JScrollPane objekt erzuegt
+     * ruft dann setPanel auf
+     * @param shoppingCart       Warenkorb des Kunden
+     */
     @Override
     public void onShowCart(Map<Article, Integer> shoppingCart) {
         cartTablePanel = new CartTablePanel(shoppingCart);
         cart_ScrollPane = new JScrollPane(cartTablePanel);
         setPanel("cart", null);
     }
-    
+
     /**
-    * Implemtierung der CustomerMenuListener Methode
-    * updated die Artikel tabelle mit der passenden Artikeln liste
-    */
+     * Implemtierung der CustomerMenuListener Methode
+     * updated die Artikel tabelle mit der passenden Artikeln liste
+     */
     @Override
     public void onEmptyCart() {
         List<Article> currentArticles = shop.getAllArticles();
         articleTablePanel.updateArticles(currentArticles);
     }
-                
+
     /**
-    * Implemtierung der CustomerMenuListener Methode
-    * Erzuegt neues InvoicePanel mit invoice
-    * ruft setPanel auf 
-    * @param invoice    rechnungs objekt
-    */
+     * Implemtierung der CustomerMenuListener Methode
+     * Erzuegt neues InvoicePanel mit invoice
+     * ruft setPanel auf
+     * @param invoice    rechnungs objekt
+     */
     @Override
     public void onBuy(Invoice invoice) {
         //update User shoppincart
         invoicePanel = new InvoicePanel(invoice, this);
         setPanel("invoice", null);
     }
-    
+
     /**
-    * Implemtierung der ArticleSortListener Methode
-    * updated die Artikel tabelle mit der passenden sortierten Artikel liste
-    * @param sortedList        Sortierte Liste
-    */
+     * Implemtierung der ArticleSortListener Methode
+     * updated die Artikel tabelle mit der passenden sortierten Artikel liste
+     * @param sortedList        Sortierte Liste
+     */
     @Override
     public void onSortID(List<Article> sortedList) {
         List<Article> currentArticles = sortedList;
         articleTablePanel.updateArticles(currentArticles);
     }
-    
+
     /**
-    * Implemtierung der ArticleSortListener Methode
-    * updated die Artikel tabelle mit der passenden sortierten Artikel liste
-    * @param sortedList        Sortierte Liste
-    */
+     * Implemtierung der ArticleSortListener Methode
+     * updated die Artikel tabelle mit der passenden sortierten Artikel liste
+     * @param sortedList        Sortierte Liste
+     */
     @Override
     public void onSortName(List<Article> sortedList) {
         List<Article> currentArticles = sortedList;
         articleTablePanel.updateArticles(currentArticles);
     }
-    
+
     /**
-    * Implemtierung der ArticleSortListener Methode
-    * updated die Artikel tabelle mit der passenden sortierten Artikel liste
-    * @param sortedList        Sortierte Liste
-    */
+     * Implemtierung der ArticleSortListener Methode
+     * updated die Artikel tabelle mit der passenden sortierten Artikel liste
+     * @param sortedList        Sortierte Liste
+     */
     @Override
     public void onSortPrice(List<Article> sortedList) {
         List<Article> currentArticles = sortedList;
         articleTablePanel.updateArticles(currentArticles);
     }
-    
+
+    @Override
+    public void onSortStock(List<Article> sortedList) {
+        List<Article> currentArticles = sortedList;
+        articleTablePanel.updateArticles(currentArticles);
+    }
+
     /**
-    * Implemtierung der InvoicePanelListener Methode
-    * ruft setPanel auf um die passenden Panels anzuzeigen
-    */
+     * Implemtierung der InvoicePanelListener Methode
+     * ruft setPanel auf um die passenden Panels anzuzeigen
+     */
     @Override
     public void onAccept() {
         setPanel("customer", null);
     }
-    
+
     /**
-    * Implemtierung der TotalBarListener Methode
-    * ruft setPanel auf um die passenden Panels anzuzeigen
-    */
+     * Implemtierung der TotalBarListener Methode
+     * ruft setPanel auf um die passenden Panels anzuzeigen
+     */
     @Override
     public void onBack() {
         setPanel("customer", null);
     }
-    
+
     /**
-    * Main Methode der GUI 
-    * holt sich die Netzwerk information falls nicht vorhanden
-    * Erzeugt GUI objekt mit eigenen Thread
-    */
+     * Main Methode der GUI
+     * holt sich die Netzwerk information falls nicht vorhanden
+     * Erzeugt GUI objekt mit eigenen Thread
+     */
     public static void main(String[] args) {
         int portArg = 0;
         String hostArg = null;
@@ -434,11 +440,11 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
             }
         });
     }
-     
+
     /**
-    * Class HelpMenu
-    * erzeugt Hilfs Menu aus einzelnen Komponenten
-    */
+     * Class HelpMenu
+     * erzeugt Hilfs Menu aus einzelnen Komponenten
+     */
     class HelpMenu extends JMenu implements ActionListener {
 
         public HelpMenu() {
@@ -457,5 +463,5 @@ public class GUI extends JFrame implements LoginPanel.LoginListener, SearchArtic
         public void actionPerformed(ActionEvent e) {
             System.out.println("something"+ e.getActionCommand());
         }
-    }   
+    }
 }
